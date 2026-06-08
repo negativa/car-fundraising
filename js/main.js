@@ -96,7 +96,12 @@ function fundraiserPage() {
     },
 
     text(key, fallback = '') {
-      return this.textsByLang[this.lang]?.[key] || this.textsByLang.ua?.[key] || fallback;
+      const lowerKey = String(key || '').toLowerCase();
+      return this.textsByLang[this.lang]?.[key]
+        || this.textsByLang[this.lang]?.[lowerKey]
+        || this.textsByLang.ua?.[key]
+        || this.textsByLang.ua?.[lowerKey]
+        || fallback;
     },
 
     get content() {
