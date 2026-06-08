@@ -102,10 +102,7 @@
             <li x-text="item"></li>
           </template>
         </ul>
-        <div class="thanks-block">
-          <span class="thanks-icon">♡</span>
-          <span x-text="text('thanks','Дякуємо за вашу підтримку та молитви!')"></span>
-        </div>
+        
       </section>
 
       <section class="info-section panel panel-full">
@@ -116,6 +113,21 @@
             <li x-text="item"></li>
           </template>
         </ul>
+      </section>
+
+      <section class="family-section panel panel-full">
+        <div class="family-photo-wrap">
+          <img class="family-photo" src="assets/family.jpg" alt="Наша сімʼя" />
+        </div>
+        <div class="family-content">
+          <div class="kicker-dark" x-text="text('familyKicker','Наша сімʼя')"></div>
+          <h2 x-text="text('familyTitle','Наша сімʼя')"></h2>
+          <p class="section-desc" x-text="text('family','Ми дякуємо за вашу підтримку, молитви та участь у цьому зборі. Для нас цей автомобіль — це можливість безпечніше служити людям і бути поруч там, де є потреба.')"></p>
+        </div>
+        <div class="thanks-block">
+          <span class="thanks-icon">♡</span>
+          <span x-text="text('thanks','Дякуємо за вашу підтримку та молитви!')"></span>
+        </div>
       </section>
     </div>
   </div>
