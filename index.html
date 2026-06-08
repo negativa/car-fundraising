@@ -6,7 +6,7 @@
   <title>Збір на мінівен для служіння</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
-<body x-data="fundraiserPage()" x-init="init()">
+<body x-data="fundraiserPage()" x-init="init()" :class="theme === 'dark' ? 'theme-dark' : 'theme-light'">
   <div class="shell">
     <div class="page-card">
       <header class="site-header">
@@ -19,6 +19,10 @@
             <button type="button" :class="{active: lang === 'ua'}" @click="setLang('ua')">UA</button>
             <button type="button" :class="{active: lang === 'en'}" @click="setLang('en')">EN</button>
           </div>
+
+          <button class="theme-toggle" type="button" @click="toggleTheme()" :aria-label="ui('themeToggle')">
+            <span x-text="theme === 'dark' ? '☀' : '☾'"></span>
+          </button>
           <button class="menu-btn" type="button" aria-label="Menu">
             <span></span><span></span><span></span>
           </button>
@@ -63,6 +67,7 @@
               </tbody>
             </table>
           </div>
+
         </div>
 
         <aside class="overview-side panel">
@@ -100,6 +105,47 @@
         </aside>
       </section>
 
+      <section class="payment-options" id="donate">
+                  <div class="payment-head">
+                    <h2 x-text="ui('paymentTitle')"></h2>
+                    <p x-text="ui('paymentSubtitle')"></p>
+                  </div>
+      
+                  <div class="payment-grid">
+                    <article class="payment-card">
+                      <div class="payment-icon">●</div>
+                      <div>
+                        <h3 x-text="text('monotitle', ui('monoTitle'))"></h3>
+                        <p x-text="text('monodetails', ui('monoDetails'))"></p>
+                      </div>
+                    </article>
+      
+                    <article class="payment-card">
+                      <div class="payment-icon">P</div>
+                      <div>
+                        <h3 x-text="text('paypaltitle', ui('paypalTitle'))"></h3>
+                        <p x-text="text('paypaldetails', ui('paypalDetails'))"></p>
+                      </div>
+                    </article>
+      
+                    <article class="payment-card">
+                      <div class="payment-icon">€</div>
+                      <div>
+                        <h3 x-text="text('sepatitle', ui('sepaTitle'))"></h3>
+                        <p x-text="text('sepadetails', ui('sepaDetails'))"></p>
+                      </div>
+                    </article>
+      
+                    <article class="payment-card">
+                      <div class="payment-icon">$</div>
+                      <div>
+                        <h3 x-text="text('swifttitle', ui('swiftTitle'))"></h3>
+                        <p x-text="text('swiftdetails', ui('swiftDetails'))"></p>
+                      </div>
+                    </article>
+                  </div>
+                </section>
+      
       <section class="info-section panel panel-full">
         <h2 x-text="content.need.title || text('needTitle','Для чого потрібен новий автомобіль?')"></h2>
         <p class="section-desc" x-text="content.need.desc || text('needDesc','Надійний транспорт потрібен не для зручності, а для того, щоб служіння могло продовжуватися без зривів і ризику на дорозі.')"></p>
@@ -131,7 +177,7 @@
         </div>
         <div class="thanks-block">
           <span class="thanks-icon">♡</span>
-          <span x-text="text('thanks','Дякуємо за вашу підтримку та молитви!')"></span>
+          <span x-text="text('thanks', ui('thanks'))"></span>
         </div>
       </section>
     </div>

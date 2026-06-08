@@ -5,6 +5,7 @@ function fundraiserPage() {
     loading: true,
     error: '',
     lang: localStorage.getItem('fundraiser_lang') || 'ua',
+    theme: localStorage.getItem('fundraiser_theme') || 'light',
     textsByLang: { ua: {}, en: {} },
     contentByLang: {
       ua: { need: { title: '', desc: '', items: [] }, risk: { title: '', desc: '', items: [] } },
@@ -27,9 +28,21 @@ function fundraiserPage() {
         donationsTitle: 'Останні пожертви',
         loading: 'Завантажуємо дані...',
         copied: 'Посилання скопійовано',
+        themeToggle: 'Перемкнути тему',
         heroKicker: 'Збір на транспорт',
         familyKicker: 'Наша сімʼя',
-        familyTitle: 'Наша сімʼя'
+        familyTitle: 'Наша сімʼя',
+        thanks: 'Дякуємо за вашу підтримку та молитви!',
+        paymentTitle: 'Реквізити для підтримки',
+        paymentSubtitle: 'Оберіть зручний спосіб переказу. Деталі можна змінювати у вкладці Texts.',
+        monoTitle: 'mono банка',
+        monoDetails: 'Посилання на банку або номер картки можна додати у полі monodetails_ua.',
+        paypalTitle: 'PayPal',
+        paypalDetails: 'PayPal-посилання або email можна додати у полі paypaldetails_ua.',
+        sepaTitle: 'Єврова карта / SEPA',
+        sepaDetails: 'IBAN, отримувач та призначення платежу можна додати у полі sepadetails_ua.',
+        swiftTitle: 'Доларова карта / SWIFT',
+        swiftDetails: 'SWIFT-реквізити для доларового переказу можна додати у полі swiftdetails_ua.'
       },
       en: {
         dateLabel: 'Date',
@@ -44,9 +57,21 @@ function fundraiserPage() {
         donationsTitle: 'Latest donations',
         loading: 'Loading data...',
         copied: 'Link copied',
+        themeToggle: 'Toggle theme',
         heroKicker: 'Transport fundraiser',
         familyKicker: 'Our family',
-        familyTitle: 'Our family'
+        familyTitle: 'Our family',
+        thanks: 'Thank you for your support and prayers!',
+        paymentTitle: 'Donation details',
+        paymentSubtitle: 'Choose a convenient transfer method. You can edit the details in the Texts sheet.',
+        monoTitle: 'mono jar',
+        monoDetails: 'Add the mono jar link or card number in monodetails_en.',
+        paypalTitle: 'PayPal',
+        paypalDetails: 'Add a PayPal link or email in paypaldetails_en.',
+        sepaTitle: 'Euro card / SEPA',
+        sepaDetails: 'Add IBAN, recipient and payment purpose in sepadetails_en.',
+        swiftTitle: 'Dollar card / SWIFT',
+        swiftDetails: 'Add SWIFT details for USD transfers in swiftdetails_en.'
       }
     },
 
@@ -59,6 +84,11 @@ function fundraiserPage() {
       this.lang = nextLang === 'en' ? 'en' : 'ua';
       localStorage.setItem('fundraiser_lang', this.lang);
       document.documentElement.lang = this.lang === 'en' ? 'en' : 'uk';
+    },
+
+    toggleTheme() {
+      this.theme = this.theme === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('fundraiser_theme', this.theme);
     },
 
     ui(key) {
