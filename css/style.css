@@ -345,6 +345,39 @@ button { font: inherit; }
   .stats-grid { grid-template-columns: 1fr 1fr; }
 }
 
+
+@media (min-width: 721px) and (max-width: 980px) {
+  .overview-grid {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .overview-side {
+    order: -1;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .overview-main {
+    order: 0;
+    border-top: 0;
+    border-right: 0;
+  }
+
+  .overview-side .side-divider,
+  .overview-side .donor-block {
+    display: none;
+  }
+
+  .overview-side .ring-wrap {
+    margin-bottom: 0;
+  }
+
+  .overview-side .btn-stack {
+    margin-top: 0;
+  }
+}
+
 @media (max-width: 720px) {
   body { background: #fff; }
   .shell { margin: 0; padding: 0; max-width: none; }
@@ -357,23 +390,84 @@ button { font: inherit; }
   .hero h1 { font-size: 38px; max-width: 320px; }
   .hero p { font-size: 14px; max-width: 340px; }
   .kicker { font-size: 10px; margin-bottom: 12px; }
+  .overview-grid {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .overview-side {
+    order: -1;
+    display: grid;
+    grid-template-columns: 170px minmax(0, 1fr);
+    column-gap: 30px;
+    row-gap: 28px;
+    align-items: center;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .overview-main {
+    order: 0;
+    border-top: 0;
+  }
+
   .overview-main,
   .overview-side,
-  .panel-full { padding: 26px 20px; }
+  .panel-full { padding: 34px 20px; }
+
+  .overview-side .ring-wrap {
+    margin: 0;
+    justify-content: flex-start;
+  }
+
+  .overview-side .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    align-items: center;
+  }
+
+  .overview-side .side-divider,
+  .overview-side .donor-block {
+    display: none;
+  }
+
+  .overview-side .btn-stack {
+    grid-column: 1 / -1;
+    margin-top: 0;
+  }
+
   .panel-head h2,
   .info-section h2 { font-size: 22px; margin-bottom: 20px; }
   .section-desc { font-size: 16px; }
   .donation-table { min-width: 480px; }
   .donation-table td { font-size: 15px; }
-  .ring { width: 140px; height: 140px; }
-  .ring::after { inset: 14px; }
-  .ring-value { font-size: 28px; }
-  .ring-label { font-size: 15px; }
-  .stat-big { font-size: 24px; }
-  .goal-big { text-align: left; font-size: 24px; }
-  .stats-grid { grid-template-columns: 1fr; gap: 16px; }
+  .ring { width: 158px; height: 158px; }
+  .ring::after { inset: 15px; }
+  .ring-value { font-size: 32px; }
+  .ring-label { font-size: 16px; }
+  .stat-big { font-size: 34px; }
+  .goal-big { text-align: left; font-size: 26px; }
+
+  .stat-sub.stat-goal {
+    text-align: left;
+  }
   .donor-big { font-size: 38px; }
   .btn { font-size: 16px; padding: 14px 16px; }
   .bullets li { font-size: 16px; }
   .thanks-block { font-size: 16px; }
+}
+
+@media (max-width: 430px) {
+  .overview-side {
+    grid-template-columns: 140px minmax(0, 1fr);
+    column-gap: 18px;
+  }
+
+  .ring { width: 132px; height: 132px; }
+  .ring::after { inset: 13px; }
+  .ring-value { font-size: 28px; }
+  .ring-label { font-size: 14px; }
+  .stat-big { font-size: 28px; }
+  .goal-big { font-size: 23px; }
 }
