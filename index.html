@@ -14,15 +14,21 @@
           <span class="brand-mark" x-text="text('logoSymbol','✝')"></span>
           <span class="brand-name" x-text="text('siteName','Pidhaine Ministry')"></span>
         </a>
-        <button class="menu-btn" type="button" aria-label="Menu">
-          <span></span><span></span><span></span>
-        </button>
+        <div class="header-actions">
+          <div class="lang-switch" aria-label="Language switcher">
+            <button type="button" :class="{active: lang === 'ua'}" @click="setLang('ua')">UA</button>
+            <button type="button" :class="{active: lang === 'en'}" @click="setLang('en')">EN</button>
+          </div>
+          <button class="menu-btn" type="button" aria-label="Menu">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
       </header>
 
       <section class="hero">
         <div class="hero-overlay"></div>
         <div class="hero-copy">
-          <div class="kicker" x-text="text('heroKicker','Збір на транспорт')"></div>
+          <div class="kicker" x-text="text('heroKicker', ui('heroKicker'))"></div>
           <h1 x-text="text('header','Збір на мінівен для сімʼї та служіння')"></h1>
           <p x-text="text('paragraph','Старий мікроавтобус багато років возив дітей, команду, допомогу та людей. Тепер через критичну корозію й постійні поломки він став ризиком у дорозі.')"></p>
         </div>
@@ -31,19 +37,19 @@
       <section class="overview-grid">
         <div class="overview-main panel">
           <div class="panel-head">
-            <h2 x-text="text('donationsTitle','Останні пожертви')"></h2>
+            <h2 x-text="ui('donationsTitle')"></h2>
           </div>
 
-          <div class="status" x-show="loading" x-cloak>Завантажуємо дані...</div>
+          <div class="status" x-show="loading" x-cloak x-text="ui('loading')"></div>
           <div class="error" x-show="error" x-text="error" x-cloak></div>
 
           <div class="table-wrap" x-show="!loading && recentDonations.length" x-cloak>
             <table class="donation-table">
               <thead>
                 <tr>
-                  <th x-text="text('dateLabel','Дата')"></th>
-                  <th x-text="text('amountLabel','Сума')"></th>
-                  <th x-text="text('sourceLabel','Звідки пожертва')"></th>
+                  <th x-text="ui('dateLabel')"></th>
+                  <th x-text="ui('amountLabel')"></th>
+                  <th x-text="ui('sourceLabel')"></th>
                 </tr>
               </thead>
               <tbody>
@@ -64,7 +70,7 @@
             <div class="ring" :style="`--p:${progress}`">
               <div class="ring-center">
                 <div class="ring-value"><span x-text="progress"></span>%</div>
-                <div class="ring-label" x-text="text('progressLabel','зібрано')"></div>
+                <div class="ring-label" x-text="ui('progressLabel')"></div>
               </div>
             </div>
           </div>
@@ -72,11 +78,11 @@
           <div class="stats-grid">
             <div>
               <div class="stat-big" x-text="formatMoney(totalRaised)"></div>
-              <div class="stat-sub" x-text="text('raisedLabel','зібрано')"></div>
+              <div class="stat-sub" x-text="ui('raisedLabel')"></div>
             </div>
             <div>
               <div class="stat-big goal-big" x-text="formatMoney(goal)"></div>
-              <div class="stat-sub stat-goal" x-text="text('goalLabel','ціль')"></div>
+              <div class="stat-sub stat-goal" x-text="ui('goalLabel')"></div>
             </div>
           </div>
 
@@ -84,12 +90,12 @@
 
           <div class="donor-block">
             <div class="donor-big" x-text="donorCount"></div>
-            <div class="stat-sub" x-text="text('donorsLabel','благодійників')"></div>
+            <div class="stat-sub" x-text="ui('donorsLabel')"></div>
           </div>
 
           <div class="btn-stack">
-            <a class="btn btn-primary" :href="text('donateLink','#donate')" x-text="text('donateButton','Підтримати збір')"></a>
-            <button class="btn btn-outline" type="button" @click="sharePage()" x-text="text('shareButton','Поділитися')"></button>
+            <a class="btn btn-primary" :href="text('donateLink','#donate')" x-text="ui('donateButton')"></a>
+            <button class="btn btn-outline" type="button" @click="sharePage()" x-text="ui('shareButton')"></button>
           </div>
         </aside>
       </section>
@@ -102,7 +108,6 @@
             <li x-text="item"></li>
           </template>
         </ul>
-        
       </section>
 
       <section class="info-section panel panel-full">
@@ -120,8 +125,8 @@
           <img class="family-photo" src="assets/family.jpg" alt="Наша сімʼя" />
         </div>
         <div class="family-content">
-          <div class="kicker-dark" x-text="text('familyKicker','Наша сімʼя')"></div>
-          <h2 x-text="text('familyTitle','Наша сімʼя')"></h2>
+          <div class="kicker-dark" x-text="text('familyKicker', ui('familyKicker'))"></div>
+          <h2 x-text="text('familyTitle', ui('familyTitle'))"></h2>
           <p class="section-desc" x-text="text('family','Ми дякуємо за вашу підтримку, молитви та участь у цьому зборі. Для нас цей автомобіль — це можливість безпечніше служити людям і бути поруч там, де є потреба.')"></p>
         </div>
         <div class="thanks-block">

@@ -369,6 +369,10 @@ button { font: inherit; }
     display: none;
   }
 
+  .stats-grid {
+    margin-bottom: 20px;
+  }
+
   .overview-side .ring-wrap {
     margin-bottom: 0;
   }
@@ -490,7 +494,7 @@ button { font: inherit; }
 .family-photo {
   display: block;
   width: 100%;
-  /* aspect-ratio: 16 / 10; */
+  aspect-ratio: 16 / 10;
   object-fit: cover;
 }
 
@@ -526,11 +530,54 @@ button { font: inherit; }
     border-radius: 16px;
   }
 
-  /* .family-photo {
+  .family-photo {
     aspect-ratio: 4 / 3;
-  } */
+  }
 
   .family-content h2 {
     font-size: 24px;
+  }
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #f7f9fa;
+}
+
+.lang-switch button {
+  border: 0;
+  background: transparent;
+  color: #6b7280;
+  font-weight: 850;
+  font-size: 12px;
+  letter-spacing: .04em;
+  padding: 7px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.lang-switch button.active {
+  background: var(--navy);
+  color: #fff;
+}
+
+@media (max-width: 720px) {
+  .header-actions {
+    gap: 10px;
+  }
+
+  .lang-switch button {
+    padding: 6px 8px;
+    font-size: 11px;
   }
 }

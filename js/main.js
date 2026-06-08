@@ -1,20 +1,88 @@
+
 function fundraiserPage() {
   return {
     sheetId: '1IvyMANxV3IXFEdv3bua50zqwJBO9sxZhCFDkaNRUJJc',
     loading: true,
     error: '',
-    texts: {},
-    content: { need: { title: '', desc: '', items: [] }, risk: { title: '', desc: '', items: [] } },
+    lang: localStorage.getItem('fundraiser_lang') || 'ua',
+    textsByLang: { ua: {}, en: {} },
+    contentByLang: {
+      ua: { need: { title: '', desc: '', items: [] }, risk: { title: '', desc: '', items: [] } },
+      en: { need: { title: '', desc: '', items: [] }, risk: { title: '', desc: '', items: [] } }
+    },
     donations: [],
-    goal: 20000,
+    goal: 35000,
+
+    uiText: {
+      ua: {
+        dateLabel: 'Дата',
+        amountLabel: 'Сума, $',
+        sourceLabel: 'Звідки пожертва',
+        progressLabel: 'зібрано',
+        raisedLabel: 'зібрано',
+        goalLabel: 'ціль',
+        donorsLabel: 'благодійників',
+        donateButton: 'Підтримати збір',
+        shareButton: 'Поділитися',
+        donationsTitle: 'Останні пожертви',
+        loading: 'Завантажуємо дані...',
+        copied: 'Посилання скопійовано',
+        heroKicker: 'Збір на транспорт',
+        familyKicker: 'Наша сімʼя',
+        familyTitle: 'Наша сімʼя'
+      },
+      en: {
+        dateLabel: 'Date',
+        amountLabel: 'Amount, $',
+        sourceLabel: 'Donation source',
+        progressLabel: 'funded',
+        raisedLabel: 'raised',
+        goalLabel: 'goal',
+        donorsLabel: 'donors',
+        donateButton: 'Donate now',
+        shareButton: 'Share',
+        donationsTitle: 'Latest donations',
+        loading: 'Loading data...',
+        copied: 'Link copied',
+        heroKicker: 'Transport fundraiser',
+        familyKicker: 'Our family',
+        familyTitle: 'Our family'
+      }
+    },
 
     async init() {
       await this.loadAll();
       setInterval(() => this.loadAll(false), 60000);
     },
 
+    setLang(nextLang) {
+      this.lang = nextLang === 'en' ? 'en' : 'ua';
+      localStorage.setItem('fundraiser_lang', this.lang);
+      document.documentElement.lang = this.lang === 'en' ? 'en' : 'uk';
+    },
+
+    ui(key) {
+      return this.text(key, this.uiText[this.lang]?.[key] || this.uiText.ua[key] || '');
+    },
+
     text(key, fallback = '') {
-      return this.texts[key] || fallback;
+      return this.textsByLang[this.lang]?.[key] || this.textsByLang.ua?.[key] || fallback;
+    },
+
+    get content() {
+      const current = this.contentByLang[this.lang] || this.contentByLang.ua;
+      return {
+        need: {
+          title: current.need.title || this.contentByLang.ua.need.title,
+          desc: current.need.desc || this.contentByLang.ua.need.desc,
+          items: current.need.items.length ? current.need.items : this.contentByLang.ua.need.items
+        },
+        risk: {
+          title: current.risk.title || this.contentByLang.ua.risk.title,
+          desc: current.risk.desc || this.contentByLang.ua.risk.desc,
+          items: current.risk.items.length ? current.risk.items : this.contentByLang.ua.risk.items
+        }
+      };
     },
 
     get totalRaised() {
@@ -32,7 +100,11 @@ function fundraiserPage() {
     get recentDonations() {
       return [...this.donations]
         .sort((a, b) => this.dateValue(b.date) - this.dateValue(a.date))
-        .slice(0, 8);
+        .slice(0, 8)
+        .map(item => ({
+          ...item,
+          source: item[`source_${this.lang}`] || item.source_ua || item.source_en || item.source || ''
+        }));
     },
 
     async loadAll(showLoading = true) {
@@ -44,14 +116,16 @@ function fundraiserPage() {
         const donationsData = await this.fetchSheet('Donations', { withHeaderRow: true });
 
         const parsedTexts = this.parseContent(textsData.rows || []);
-        this.texts = parsedTexts.texts;
-        this.content = parsedTexts.content;
+        this.textsByLang = parsedTexts.textsByLang;
+        this.contentByLang = parsedTexts.contentByLang;
         this.goal = parsedTexts.goal || this.goal;
 
         this.donations = this.parseDonations(donationsData.rows || [], donationsData.headers || []);
       } catch (e) {
         console.error(e);
-        this.error = 'Не вдалося завантажити дані з Google Таблиці. Перевірте доступ до таблиці та назви вкладок “Texts” і “Donations”.';
+        this.error = this.lang === 'en'
+          ? 'Could not load data from Google Sheets. Check sharing access and tab names “Texts” and “Donations”.'
+          : 'Не вдалося завантажити дані з Google Таблиці. Перевірте доступ до таблиці та назви вкладок “Texts” і “Donations”.';
       } finally {
         this.loading = false;
       }
@@ -107,41 +181,43 @@ function fundraiserPage() {
 
     parseContent(rows) {
       const result = {
-        texts: {},
-        content: {
-          need: { title: '', desc: '', items: [] },
-          risk: { title: '', desc: '', items: [] }
+        textsByLang: { ua: {}, en: {} },
+        contentByLang: {
+          ua: { need: { title: '', desc: '', items: [] }, risk: { title: '', desc: '', items: [] } },
+          en: { need: { title: '', desc: '', items: [] }, risk: { title: '', desc: '', items: [] } }
         },
         goal: 0
       };
 
-      const applyEntry = (key, value) => {
-        if (!key) return;
-        const k = String(key).trim().toLowerCase();
-        const v = String(value || '').trim();
-        if (!v) return;
+      const normalize = (key) => String(key || '').trim();
+      const splitKey = (rawKey) => {
+        const key = normalize(rawKey);
+        const match = key.match(/^(.*)_(ua|en)$/i);
+        if (match) return { base: match[1].toLowerCase(), lang: match[2].toLowerCase() };
+        return { base: key.toLowerCase(), lang: 'ua' };
+      };
 
-        if (['goal', 'target', 'ціль', 'цільова сума'].includes(k)) {
+      const applyEntry = (rawKey, value) => {
+        const v = String(value || '').trim();
+        if (!rawKey || !v) return;
+
+        const { base, lang } = splitKey(rawKey);
+        const targetLang = lang === 'en' ? 'en' : 'ua';
+
+        if (['goal', 'target', 'ціль', 'цільова сума'].includes(base)) {
           result.goal = this.parseAmount(v);
-        } else if (k === 'header') {
-          result.texts.header = v;
-        } else if (k === 'paragraph') {
-          result.texts.paragraph = v;
-        } else if (k === 'title1') {
-          result.content.need.title = v;
-        } else if (k === 'desc1') {
-          result.content.need.desc = v;
-        } else if (k === 'item1') {
-          result.content.need.items.push(v);
-        } else if (k === 'title2') {
-          result.content.risk.title = v;
-        } else if (k === 'desc2') {
-          result.content.risk.desc = v;
-        } else if (k === 'item2') {
-          result.content.risk.items.push(v);
-        } else {
-          result.texts[k] = v;
+          return;
         }
+
+        if (base === 'header') result.textsByLang[targetLang].header = v;
+        else if (base === 'paragraph') result.textsByLang[targetLang].paragraph = v;
+        else if (base === 'title1') result.contentByLang[targetLang].need.title = v;
+        else if (base === 'desc1') result.contentByLang[targetLang].need.desc = v;
+        else if (base === 'item1') result.contentByLang[targetLang].need.items.push(v);
+        else if (base === 'title2') result.contentByLang[targetLang].risk.title = v;
+        else if (base === 'desc2') result.contentByLang[targetLang].risk.desc = v;
+        else if (base === 'item2') result.contentByLang[targetLang].risk.items.push(v);
+        else result.textsByLang[targetLang][base] = v;
       };
 
       rows.forEach((row) => {
@@ -163,14 +239,16 @@ function fundraiserPage() {
       const dateIndex = findHeaderIndex(['date', 'дата'], 0);
       const amountIndex = findHeaderIndex(['amount', 'сума'], 1);
       const systemIndex = findHeaderIndex(['payment system', 'payment', 'платіжна система', 'платіж'], 2);
-      const countryIndex = findHeaderIndex(['country', 'країна', 'source', 'звідки'], 3);
+      const countryUaIndex = findHeaderIndex(['country_ua', 'країна', 'country ua'], 3);
+      const countryEnIndex = findHeaderIndex(['country_en', 'country en'], 4);
 
       return (rows || [])
         .map((row) => ({
           date: String(row[dateIndex] || '').trim(),
           amount: this.parseAmount(row[amountIndex]),
           system: String(row[systemIndex] || '').trim(),
-          source: String(row[countryIndex] || '').trim()
+          source_ua: String(row[countryUaIndex] || '').trim(),
+          source_en: String(row[countryEnIndex] || row[countryUaIndex] || '').trim()
         }))
         .filter(item => item.date && item.amount > 0)
         .sort((a, b) => this.dateValue(b.date) - this.dateValue(a.date));
@@ -204,7 +282,7 @@ function fundraiserPage() {
         await navigator.share(data).catch(() => {});
       } else {
         await navigator.clipboard?.writeText(location.href);
-        alert('Посилання скопійовано');
+        alert(this.ui('copied'));
       }
     }
   };
