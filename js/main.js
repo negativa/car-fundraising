@@ -70,8 +70,11 @@ document.addEventListener('alpine:init', () => {
     imageModalOpen: false,
     activeImage: { src: '', caption: '' },
     circumference: 2 * Math.PI * 52,
+    theme: 'light',
 
     init() {
+      const savedTheme = window.localStorage.getItem('vehicle_fund_theme');
+      this.theme = savedTheme === 'dark' ? 'dark' : 'light';
       this.loadSupporters();
       this.loadContent();
     },
@@ -97,7 +100,20 @@ document.addEventListener('alpine:init', () => {
     },
 
     get visibleDonations() {
-      return [...this.donations].reverse();
+      return [...this.donations].reverse().slice(0, 7);
+    },
+
+    get themeToggleText() {
+      return this.theme === 'dark' ? 'Світла тема' : 'Темна тема';
+    },
+
+    get themeIcon() {
+      return this.theme === 'dark' ? '☀' : '☾';
+    },
+
+    toggleTheme() {
+      this.theme = this.theme === 'dark' ? 'light' : 'dark';
+      window.localStorage.setItem('vehicle_fund_theme', this.theme);
     },
 
     fmtCurrency(value) {
