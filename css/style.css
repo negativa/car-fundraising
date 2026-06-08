@@ -1,604 +1,379 @@
 :root {
-      --bg: #f5f6f7;
-      --paper: #fff;
-      --ink: #17212f;
-      --muted: #66717d;
-      --line: #e9edf0;
-      --accent: #58c49b;
-      --accent-dark: #20a978;
-      --navy: #233047;
-      --shadow: 0 28px 90px rgba(27, 39, 51, .12);
-    }
-
-    * {
-      box-sizing: border-box
-    }
-
-    [x-cloak] {
-      display: none !important
-    }
-
-    body {
-      margin: 0;
-      background: linear-gradient(#fafafa, #f0f2f3);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: var(--ink);
-      line-height: 1.5
-    }
-
-    a {
-      text-decoration: none;
-      color: inherit
-    }
-
-    button {
-      font: inherit
-    }
-
-    .shell {
-      max-width: 1220px;
-      margin: 44px auto;
-      padding: 0 22px 42px
-    }
-
-    .card {
-      overflow: hidden;
-      background: var(--paper);
-      border-radius: 28px;
-      box-shadow: var(--shadow);
-      border: 1px solid rgba(0, 0, 0, .04)
-    }
-
-    .site-header {
-      height: 74px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 28px;
-      border-bottom: 1px solid var(--line);
-      background: rgba(255, 255, 255, .92);
-      backdrop-filter: blur(16px)
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 18px;
-      font-weight: 700;
-      color: #233047
-    }
-
-    .brand-mark {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: #263249;
-      color: white;
-      font-size: 25px;
-      line-height: 1.5
-    }
-
-    .hamburger {
-      width: 26px;
-      display: grid;
-      gap: 5px
-    }
-
-    .hamburger span {
-      height: 2.5px;
-      border-radius: 99px;
-      background: #c5cdd3
-    }
-
-    .layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 292px;
-      min-height: 760px
-    }
-
-    .main {
-      min-width: 0
-    }
-
-    .aside {
-      border-left: 1px solid var(--line);
-      padding: 42px 36px;
-      background: #fff
-    }
-
-    .aside-inner {
-      position: sticky;
-      top: 24px
-    }
-
-    .hero {
-      min-height: 480px;
-      padding: 54px 58px;
-      color: #fff;
-      display: flex;
-      align-items: flex-start;
-      background-image: linear-gradient(90deg, rgba(10, 18, 26, .78) 0%, rgba(10, 18, 26, .42) 42%, rgba(10, 18, 26, .02) 78%), url('../assets/hero-car.jpg');
-      background-size: cover;
-      background-position: center
-    }
-
-    .kicker {
-      font-size: 12px;
-      letter-spacing: .16em;
-      text-transform: uppercase;
-      color: rgba(255, 255, 255, .72);
-      font-weight: 800;
-      margin-bottom: 18px
-    }
-
-    .hero h1 {
-      max-width: 560px;
-      margin: 0 0 22px;
-      font-size: clamp(44px, 5.4vw, 74px);
-      line-height: .98;
-      letter-spacing: -.055em;
-      font-weight: 900;
-      text-wrap: balance
-    }
-
-    .hero p {
-      margin: 0;
-      max-width: 560px;
-      color: rgba(255, 255, 255, .92);
-      font-size: 19px;
-      line-height: 1.45;
-      font-weight: 500
-    }
-
-    .content {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      border-top: 1px solid var(--line)
-    }
-
-    .section {
-      padding: 40px 58px
-    }
-
-    .section+.section {
-      border-left: 1px solid var(--line)
-    }
-
-    .section h2 {
-      margin: 0 0 22px;
-      font-size: 28px;
-      line-height: 1.12;
-      letter-spacing: -.035em
-    }
-
-    .section p {
-      margin: 0;
-      color: #323e4b;
-      font-size: 17px
-    }
-
-    .bullets {
-      margin: 22px 0 0;
-      padding: 0;
-      list-style: none;
-      display: grid;
-      gap: 12px
-    }
-
-    .bullets li {
-      display: flex;
-      gap: 11px;
-      color: #333f4b
-    }
-
-    .bullets li:before {
-      content: "";
-      width: 7px;
-      height: 7px;
-      border-radius: 99px;
-      background: var(--accent-dark);
-      margin-top: 10px;
-      flex: none
-    }
-
-    .thanks {
-      display: flex;
-      gap: 14px;
-      align-items: flex-start;
-      margin-top: 30px;
-      font-weight: 700;
-      color: #2c3743
-    }
-
-    .heart {
-      font-size: 32px;
-      color: var(--accent-dark);
-      line-height: 1
-    }
-
-    .donations {
-      border-top: 1px solid var(--line);
-      padding: 34px 58px 44px
-    }
-
-    .donations-head {
-      display: flex;
-      justify-content: space-between;
-      gap: 18px;
-      align-items: flex-end;
-      margin-bottom: 18px
-    }
-
-    .donations h2 {
-      margin: 0 0 4px;
-      font-size: 26px;
-      letter-spacing: -.025em
-    }
-
-    .muted {
-      color: var(--muted)
-    }
-
-    .sheet-link {
-      font-size: 13px;
-      color: var(--accent-dark);
-      font-weight: 800
-    }
-
-    .table-wrap {
-      overflow-x: auto
-    }
-
-    .donation-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 15px;
-      min-width: 560px
-    }
-
-    .donation-table th {
-      text-align: left;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      color: #6c7782;
-      border-bottom: 1px solid var(--line);
-      padding: 10px 0
-    }
-
-    .donation-table td {
-      border-bottom: 1px solid #edf0f2;
-      padding: 13px 0
-    }
-
-    .donation-table td:nth-child(2) {
-      font-weight: 800
-    }
-
-    .status {
-      padding: 12px 0;
-      color: var(--muted)
-    }
-
-    .error {
-      margin-top: 14px;
-      padding: 14px 16px;
-      border-radius: 14px;
-      border: 1px solid #f1c3c3;
-      background: #fff5f5;
-      color: #9c2727
-    }
-
-    .cross {
-      width: 58px;
-      height: 58px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: var(--navy);
-      color: #fff;
-      font-size: 40px;
-      line-height: 1;
-      margin-bottom: 26px;
-      box-shadow: 0 12px 26px rgba(35, 48, 71, .15)
-    }
-
-    .label {
-      font-size: 12px;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      font-weight: 800;
-      color: #687481;
-      margin-bottom: 8px
-    }
-
-    .aside h3 {
-      font-size: 28px;
-      line-height: 1.15;
-      letter-spacing: -.03em;
-      margin: 0 0 28px
-    }
-
-    .ring-wrap {
-      display: flex;
-      justify-content: center;
-      margin: 2px 0 32px
-    }
-
-    .ring {
-      --p: 0;
-      width: 170px;
-      height: 170px;
-      border-radius: 50%;
-      background: conic-gradient(var(--accent) calc(var(--p)*1%), #e8edf0 0);
-      display: grid;
-      place-items: center;
-      position: relative
-    }
-
-    .ring:after {
-      content: "";
-      position: absolute;
-      inset: 17px;
-      border-radius: 50%;
-      background: white;
-      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .02)
-    }
-
-    .ring b {
-      position: relative;
-      z-index: 1;
-      font-size: 38px;
-      line-height: 1;
-      letter-spacing: -.035em
-    }
-
-    .ring small {
-      display: block;
-      font-size: 14px;
-      color: #5f6a75;
-      margin-top: 5px;
-      text-align: center;
-      letter-spacing: 0;
-      font-weight: 700
-    }
-
-    .money {
-      font-size: 36px;
-      font-weight: 300;
-      letter-spacing: -.035em
-    }
-
-    .goal {
-      margin-top: 14px;
-      color: #42505e;
-      font-size: 16px
-    }
-
-    .divider {
-      height: 1px;
-      background: var(--line);
-      margin: 24px 0
-    }
-
-    .donors {
-      font-size: 32px;
-      font-weight: 300;
-      letter-spacing: -.02em
-    }
-
-    .btn-row {
-      margin-top: 28px
-    }
-
-    .btn {
-      width: 100%;
-      border-radius: 7px;
-      border: 0;
-      padding: 16px 20px;
-      font-weight: 850;
-      cursor: pointer;
-      transition: .2s
-    }
-
-    .btn:hover {
-      transform: translateY(-1px)
-    }
-
-    .btn-primary {
-      display: block;
-      text-align: center;
-      background: var(--accent);
-      color: #fff;
-      box-shadow: 0 12px 22px rgba(32, 169, 120, .18)
-    }
-
-    .btn-primary:hover {
-      background: var(--accent-dark)
-    }
-
-    .btn-outline {
-      margin-top: 14px;
-      background: #fff;
-      border: 1.5px solid var(--accent);
-      color: var(--accent-dark)
-    }
-
-    @media(max-width:1050px) {
-      .shell {
-        max-width: 840px
-      }
-
-      .layout {
-        grid-template-columns: 1fr;
-        min-height: 0
-      }
-
-      .aside {
-        border-left: 0;
-        border-top: 1px solid var(--line);
-        padding: 34px 48px
-      }
-
-      .aside-inner {
-        position: static;
-        display: grid;
-        grid-template-columns: auto 1fr;
-        gap: 32px;
-        align-items: start
-      }
-
-      .ring-wrap {
-        justify-content: flex-start;
-        margin: 0 0 22px
-      }
-
-      .content {
-        grid-template-columns: 1fr
-      }
-
-      .section+.section {
-        border-left: 0;
-        border-top: 1px solid var(--line)
-      }
-
-      .hero {
-        min-height: 430px;
-        background-position: center right
-      }
-    }
-
-    @media(max-width:720px) {
-      body {
-        background: #fff
-      }
-
-      .shell {
-        margin: 0;
-        padding: 0;
-        max-width: none
-      }
-
-      .card {
-        border-radius: 0;
-        border: 0;
-        box-shadow: none
-      }
-
-      .site-header {
-        height: 58px;
-        padding: 0 22px;
-        position: sticky;
-        top: 0;
-        z-index: 10
-      }
-
-      .brand {
-        font-size: 16px
-      }
-
-      .brand-mark {
-        width: 30px;
-        height: 30px
-      }
-
-      .hero {
-        min-height: 390px;
-        padding: 32px 24px;
-        background-image: linear-gradient(180deg, rgba(10, 18, 26, .76) 0%, rgba(10, 18, 26, .45) 52%, rgba(10, 18, 26, .08) 100%), url('../assets/hero-car.jpg');
-        background-position: center
-      }
-
-      .kicker {
-        font-size: 10px;
-        margin-bottom: 12px
-      }
-
-      .hero h1 {
-        font-size: 42px;
-        line-height: 1.02
-      }
-
-      .hero p {
-        font-size: 15px;
-        max-width: 330px
-      }
-
-      .aside {
-        padding: 28px 24px
-      }
-
-      .aside-inner {
-        display: block
-      }
-
-      .cross {
-        width: 46px;
-        height: 46px;
-        font-size: 32px;
-        margin-bottom: 18px
-      }
-
-      .aside h3 {
-        font-size: 24px;
-        margin-bottom: 20px
-      }
-
-      .ring {
-        width: 140px;
-        height: 140px
-      }
-
-      .ring:after {
-        inset: 14px
-      }
-
-      .ring b {
-        font-size: 32px
-      }
-
-      .ring-wrap {
-        justify-content: flex-start
-      }
-
-      .money {
-        font-size: 34px
-      }
-
-      .content {
-        display: block
-      }
-
-      .section {
-        padding: 32px 24px
-      }
-
-      .section+.section {
-        border-left: 0;
-        border-top: 1px solid var(--line)
-      }
-
-      .section h2 {
-        font-size: 25px
-      }
-
-      .section p {
-        font-size: 16px
-      }
-
-      .donations {
-        padding: 30px 24px 36px
-      }
-
-      .donations-head {
-        display: block
-      }
-
-      .sheet-link {
-        display: inline-block;
-        margin-top: 8px
-      }
-    }
+  --bg: #f4f5f6;
+  --paper: #ffffff;
+  --ink: #1f2937;
+  --muted: #6b7280;
+  --line: #e8ecef;
+  --accent: #74cfa8;
+  --accent-dark: #52bf92;
+  --accent-deep: #3f9d78;
+  --navy: #25314a;
+  --shadow: 0 20px 60px rgba(17, 24, 39, 0.08);
+}
+
+* { box-sizing: border-box; }
+[x-cloak] { display: none !important; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: linear-gradient(180deg, #f6f7f8 0%, #eef1f2 100%);
+  color: var(--ink);
+}
+a { text-decoration: none; color: inherit; }
+button { font: inherit; }
+
+.shell {
+  max-width: 1260px;
+  margin: 42px auto;
+  padding: 0 24px 48px;
+}
+
+.page-card {
+  background: var(--paper);
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.site-header {
+  height: 74px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 800;
+  color: var(--navy);
+  font-size: 18px;
+}
+
+.brand-mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: var(--navy);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.menu-btn {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  background: transparent;
+  display: grid;
+  gap: 5px;
+  padding: 6px 4px;
+  cursor: pointer;
+}
+.menu-btn span {
+  display: block;
+  height: 2.5px;
+  background: #c8d0d5;
+  border-radius: 99px;
+}
+
+.hero {
+  position: relative;
+  min-height: 470px;
+  padding: 36px 48px 36px;
+  background-image: url('../assets/hero-car.jpg');
+  background-size: cover;
+  background-position: center;
+}
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(10,16,24,.76) 0%, rgba(10,16,24,.54) 35%, rgba(10,16,24,.12) 70%, rgba(10,16,24,.04) 100%);
+}
+.hero-copy {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  color: #fff;
+}
+.kicker {
+  margin-bottom: 18px;
+  text-transform: uppercase;
+  letter-spacing: .16em;
+  font-size: 13px;
+  font-weight: 800;
+  color: rgba(255,255,255,.75);
+}
+.hero h1 {
+  margin: 0 0 40px;
+  max-width: 480px;
+  font-size: clamp(40px, 7vw, 70px);
+  line-height: .95;
+  font-weight: 900;
+  letter-spacing: -0.06em;
+}
+.hero p {
+  margin: 0;
+  max-width: 600px;
+  font-size: 18px;
+  line-height: 1.45;
+  color: rgba(255,255,255,.93);
+}
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(300px, .8fr);
+}
+
+.panel {
+  background: #fff;
+}
+.overview-main {
+  padding: 42px 48px 40px;
+  border-top: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+}
+.overview-side {
+  padding: 40px 28px 34px;
+  border-top: 1px solid var(--line);
+}
+.panel-full {
+  padding: 42px 48px;
+  border-top: 1px solid var(--line);
+}
+
+.panel-head h2,
+.info-section h2 {
+  margin: 0 0 28px;
+  font-size: clamp(28px, 4vw, 34px);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+}
+.section-desc {
+  margin: 0;
+  max-width: 980px;
+  color: #394554;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.status { color: var(--muted); padding: 8px 0 12px; }
+.error {
+  margin-top: 8px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #fff4f4;
+  color: #9f2f2f;
+  border: 1px solid #efc9c9;
+}
+.table-wrap { overflow-x: auto; }
+.donation-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 560px;
+}
+.donation-table th {
+  text-align: left;
+  padding: 12px 0;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: #7b8590;
+  border-bottom: 1px solid var(--line);
+}
+.donation-table td {
+  padding: 16px 0;
+  border-bottom: 1px solid #edf1f3;
+  font-size: 18px;
+  color: #2a3442;
+}
+.donation-table td.amount-cell { font-weight: 800; }
+
+.ring-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 28px;
+}
+.ring {
+  --p: 0;
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  background: conic-gradient(var(--accent) calc(var(--p) * 1%), #e3e8eb 0);
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+.ring::after {
+  content: '';
+  position: absolute;
+  inset: 16px;
+  border-radius: 50%;
+  background: #fff;
+}
+.ring-center {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+.ring-value {
+  font-size: 32px;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+.ring-label {
+  margin-top: 8px;
+  color: #707b86;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: end;
+}
+.stat-big {
+  font-size: 30px;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  font-weight: 400;
+}
+.goal-big { text-align: right; font-weight: 500; color: #414c5a; font-size: 24px; }
+.stat-sub {
+  margin-top: 8px;
+  color: #6d7781;
+  font-size: 16px;
+}
+
+.stat-sub.stat-goal {
+  text-align: right;
+}
+.side-divider {
+  height: 1px;
+  background: var(--line);
+  margin: 28px 0;
+}
+.donor-big {
+  font-size: 48px;
+  line-height: 1;
+  font-weight: 400;
+  letter-spacing: -0.05em;
+}
+.btn-stack { margin-top: 26px; }
+.btn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 18px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 18px;
+  cursor: pointer;
+  transition: transform .18s ease, background-color .18s ease;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border: 0;
+  box-shadow: 0 10px 24px rgba(82, 191, 146, 0.18);
+}
+.btn-primary:hover { background: var(--accent-dark); }
+.btn-outline {
+  margin-top: 14px;
+  background: #fff;
+  color: var(--accent-deep);
+  border: 1.5px solid var(--accent);
+}
+
+.bullets {
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 18px;
+}
+.bullets li {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  color: #364150;
+  font-size: 17px;
+  line-height: 1.5;
+}
+.bullets li::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  margin-top: 10px;
+  flex: none;
+}
+.bullets-green li::before { background: var(--accent-deep); }
+.bullets-red li::before { background: #e06868; }
+
+.thanks-block {
+  margin-top: 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-weight: 800;
+  color: #2e3946;
+  font-size: 18px;
+}
+.thanks-icon {
+  color: var(--accent-deep);
+  font-size: 34px;
+  line-height: 1;
+}
+
+@media (max-width: 980px) {
+  .hero { min-height: 430px; padding: 50px 36px 38px; }
+  .overview-grid { grid-template-columns: 1fr; }
+  .overview-main { border-right: 0; }
+  .overview-side { border-top: 1px solid var(--line); }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 720px) {
+  body { background: #fff; }
+  .shell { margin: 0; padding: 0; max-width: none; }
+  .page-card { border-radius: 0; border: 0; box-shadow: none; }
+  .site-header { height: 62px; padding: 0 18px; }
+  .brand { font-size: 16px; }
+  .brand-mark { width: 30px; height: 30px; font-size: 20px; }
+  .hero { min-height: 340px; padding: 34px 20px 22px; }
+  .hero-overlay { background: linear-gradient(180deg, rgba(10,16,24,.78) 0%, rgba(10,16,24,.42) 58%, rgba(10,16,24,.12) 100%); }
+  .hero h1 { font-size: 38px; max-width: 320px; }
+  .hero p { font-size: 14px; max-width: 340px; }
+  .kicker { font-size: 10px; margin-bottom: 12px; }
+  .overview-main,
+  .overview-side,
+  .panel-full { padding: 26px 20px; }
+  .panel-head h2,
+  .info-section h2 { font-size: 22px; margin-bottom: 20px; }
+  .section-desc { font-size: 16px; }
+  .donation-table { min-width: 480px; }
+  .donation-table td { font-size: 15px; }
+  .ring { width: 140px; height: 140px; }
+  .ring::after { inset: 14px; }
+  .ring-value { font-size: 28px; }
+  .ring-label { font-size: 15px; }
+  .stat-big { font-size: 24px; }
+  .goal-big { text-align: left; font-size: 24px; }
+  .stats-grid { grid-template-columns: 1fr; gap: 16px; }
+  .donor-big { font-size: 38px; }
+  .btn { font-size: 16px; padding: 14px 16px; }
+  .bullets li { font-size: 16px; }
+  .thanks-block { font-size: 16px; }
+}
