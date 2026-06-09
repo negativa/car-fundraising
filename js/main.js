@@ -1,11 +1,11 @@
 
 function fundraiserPage() {
   return {
-    sheetId: '1IvyMANxV3IXFEdv3bua50zqwJBO9sxZhCFDkaNRUJJc',
+    sheetId: CONFIG.SHEET_ID,
     loading: true,
     error: '',
-    lang: localStorage.getItem('fundraiser_lang') || 'ua',
-    theme: localStorage.getItem('fundraiser_theme') || 'light',
+    lang: localStorage.getItem(CONFIG.STORAGE_KEYS.LANG) || CONFIG.DEFAULT_LANG,
+    theme: localStorage.getItem(CONFIG.STORAGE_KEYS.THEME) || CONFIG.DEFAULT_THEME,
     galleryImage: '',
     galleryImages: [],
     galleryIndex: 0,
@@ -15,99 +15,26 @@ function fundraiserPage() {
       en: { need: { title: '', desc: '', items: [] }, risk: { title: '', desc: '', items: [] } }
     },
     donations: [],
-    goal: 20000,
-
-    uiText: {
-      ua: {
-        dateLabel: 'Дата',
-        amountLabel: 'Сума, $',
-        sourceLabel: 'Звідки пожертва',
-        progressLabel: 'зібрано',
-        raisedLabel: 'зібрано',
-        goalLabel: 'ціль',
-        donorsLabel: 'благодійників',
-        donateButton: 'Підтримати збір',
-        shareButton: 'Поділитися',
-        donationsTitle: 'Останні пожертви',
-        loading: 'Завантажуємо дані...',
-        copied: 'Посилання скопійовано',
-        themeToggle: 'Перемкнути тему',
-        galleryKicker: 'Старий мінівен',
-        galleryTitle: 'Як старий мінівен служив людям',
-        gallerySubtitle: 'Кілька фото, які показують, як цей автомобіль використовувався для поїздок, допомоги, зустрічей і служіння.',
-        prevPhoto: 'Попереднє фото',
-        nextPhoto: 'Наступне фото',
-        closeLabel: 'Закрити',
-        heroKicker: 'Збір на транспорт',
-        familyKicker: 'Наша сімʼя',
-        familyTitle: 'Наша сімʼя',
-        thanks: 'Дякуємо за вашу підтримку та молитви!',
-        paymentTitle: 'Реквізити для підтримки',
-        paymentSubtitle: 'Оберіть зручний спосіб переказу.',
-        monoTitle: 'mono банка',
-        monoDetails: 'Посилання на банку або номер картки можна додати у полі monodetails_ua.',
-        paypalTitle: 'PayPal',
-        paypalDetails: 'PayPal-посилання або email можна додати у полі paypaldetails_ua.',
-        sepaTitle: 'Єврова карта / SEPA',
-        sepaDetails: 'IBAN, отримувач та призначення платежу можна додати у полі sepadetails_ua.',
-        swiftTitle: 'Доларова карта / SWIFT',
-        swiftDetails: 'SWIFT-реквізити для доларового переказу можна додати у полі swiftdetails_ua.'
-      },
-      en: {
-        dateLabel: 'Date',
-        amountLabel: 'Amount, $',
-        sourceLabel: 'Donation source',
-        progressLabel: 'funded',
-        raisedLabel: 'raised',
-        goalLabel: 'goal',
-        donorsLabel: 'donors',
-        donateButton: 'Donate now',
-        shareButton: 'Share',
-        donationsTitle: 'Latest donations',
-        loading: 'Loading data...',
-        copied: 'Link copied',
-        themeToggle: 'Toggle theme',
-        galleryKicker: 'Old minivan',
-        galleryTitle: 'How the old minivan served people',
-        gallerySubtitle: 'A few photos showing how this vehicle was used for trips, help, meetings, and ministry.',
-        prevPhoto: 'Previous photo',
-        nextPhoto: 'Next photo',
-        closeLabel: 'Close',
-        heroKicker: 'Transport fundraiser',
-        familyKicker: 'Our family',
-        familyTitle: 'Our family',
-        thanks: 'Thank you for your support and prayers!',
-        paymentTitle: 'Donation details',
-        paymentSubtitle: 'Choose a convenient transfer method.',
-        monoTitle: 'mono jar',
-        monoDetails: 'Add the mono jar link or card number in monodetails_en.',
-        paypalTitle: 'PayPal',
-        paypalDetails: 'Add a PayPal link or email in paypaldetails_en.',
-        sepaTitle: 'Euro card / SEPA',
-        sepaDetails: 'Add IBAN, recipient and payment purpose in sepadetails_en.',
-        swiftTitle: 'Dollar card / SWIFT',
-        swiftDetails: 'Add SWIFT details for USD transfers in swiftdetails_en.'
-      }
-    },
+    goal: CONFIG.GOAL,
 
     async init() {
       await this.loadAll();
-      setInterval(() => this.loadAll(false), 60000);
+      setInterval(() => this.loadAll(false), CONFIG.REFRESH_INTERVAL);
     },
 
     setLang(nextLang) {
-      this.lang = nextLang === 'en' ? 'en' : 'ua';
-      localStorage.setItem('fundraiser_lang', this.lang);
+      this.lang = CONFIG.SUPPORTED_LANGS.includes(nextLang) ? nextLang : CONFIG.DEFAULT_LANG;
+      localStorage.setItem(CONFIG.STORAGE_KEYS.LANG, this.lang);
       document.documentElement.lang = this.lang === 'en' ? 'en' : 'uk';
     },
 
     toggleTheme() {
       this.theme = this.theme === 'dark' ? 'light' : 'dark';
-      localStorage.setItem('fundraiser_theme', this.theme);
+      localStorage.setItem(CONFIG.STORAGE_KEYS.THEME, this.theme);
     },
 
     ui(key) {
-      return this.text(key, this.uiText[this.lang]?.[key] || this.uiText.ua[key] || '');
+      return this.text(key, TRANSLATIONS[this.lang]?.[key] || TRANSLATIONS.ua[key] || '');
     },
 
     text(key, fallback = '') {
@@ -150,7 +77,7 @@ function fundraiserPage() {
     get recentDonations() {
       return [...this.donations]
         .sort((a, b) => this.dateValue(b.date) - this.dateValue(a.date))
-        .slice(0, 8)
+        .slice(0, CONFIG.RECENT_DONATIONS_LIMIT)
         .map(item => ({
           ...item,
           source: item[`source_${this.lang}`] || item.source_ua || item.source_en || item.source || ''
@@ -174,8 +101,8 @@ function fundraiserPage() {
       } catch (e) {
         console.error(e);
         this.error = this.lang === 'en'
-          ? 'Could not load data from Google Sheets. Check sharing access and tab names “Texts” and “Donations”.'
-          : 'Не вдалося завантажити дані з Google Таблиці. Перевірте доступ до таблиці та назви вкладок “Texts” і “Donations”.';
+          ? 'Could not load data from Google Sheets. Check sharing access and tab names "Texts" and "Donations".'
+          : 'Не вдалося завантажити дані з Google Таблиці. Перевірте доступ до таблиці та назви вкладок "Texts" і "Donations".';
       } finally {
         this.loading = false;
       }
@@ -193,7 +120,7 @@ function fundraiserPage() {
         ];
         if (!withHeaderRow) params.push('headers=0');
 
-        const timeout = setTimeout(() => cleanup(() => reject(new Error('timeout'))), 12000);
+        const timeout = setTimeout(() => cleanup(() => reject(new Error('timeout'))), CONFIG.SHEET_FETCH_TIMEOUT);
         const cleanup = (done) => {
           clearTimeout(timeout);
           try { delete window[cb]; } catch (e) { window[cb] = undefined; }
