@@ -34,7 +34,7 @@
         <div class="hero-copy">
           <div class="kicker" x-text="text('heroKicker', ui('heroKicker'))"></div>
           <h1 x-text="text('header','Збір на мінівен для сімʼї та служіння')"></h1>
-          <p x-text="text('paragraph','Старий мікроавтобус багато років возив дітей, команду, допомогу та людей. Тепер через його недієспроможність нам потрібен новий.')"></p>
+          <p x-text="text('paragraph','Старий мікроавтобус багато років возив дітей, команду, допомогу та людей. Тепер через критичну корозію й постійні поломки він став ризиком у дорозі.')"></p>
         </div>
       </section>
 
@@ -224,7 +224,7 @@
       </div>
       <section class="info-section panel panel-full">
         <h2 x-text="content.need.title || text('needTitle','Для чого потрібен новий автомобіль?')"></h2>
-        <p class="section-desc" x-text="content.need.desc || text('needDesc','Надійний транспорт потрібен не для зручності, а для того, щоб служити людям та спільноті.')"></p>
+        <p class="section-desc" x-text="content.need.desc || text('needDesc','Надійний транспорт потрібен не для зручності, а для того, щоб служіння могло продовжуватися без зривів і ризику на дорозі.')"></p>
         <ul class="bullets bullets-green" x-show="content.need.items.length" x-cloak>
           <template x-for="item in content.need.items" :key="item">
             <li x-text="item"></li>
@@ -234,7 +234,7 @@
 
       <section class="info-section panel panel-full">
         <h2 x-text="content.risk.title || text('riskTitle','Чому старий вже небезпечний')"></h2>
-        <p class="section-desc" x-text="content.risk.desc || text('riskDesc','Стан авто вже не дозволяє покладатися на нього для регулярних поїздок.')"></p>
+        <p class="section-desc" x-text="content.risk.desc || text('riskDesc','Стан авто вже не дозволяє покладатися на нього для регулярних поїздок. Ремонти виходять дорогими, результати непередбачувані.')"></p>
         <ul class="bullets bullets-red" x-show="content.risk.items.length" x-cloak>
           <template x-for="item in content.risk.items" :key="item">
             <li x-text="item"></li>
@@ -249,7 +249,7 @@
         <div class="family-content">
           <div class="kicker-dark" x-text="text('familyKicker', ui('familyKicker'))"></div>
           <h2 x-text="text('familyTitle', ui('familyTitle'))"></h2>
-          <p class="section-desc" x-text="text('family','Ми дякуємо за вашу підтримку, молитви та участь у цьому зборі. Для нас цей автомобіль символізує силу спільноти та святості.')"></p>
+          <p class="section-desc" x-text="text('family','Ми дякуємо за вашу підтримку, молитви та участь у цьому зборі. Для нас цей автомобіль — це можливість безпечніше служити людям і бути поруч там, де є потреба.')"></p>
         </div>
         <div class="thanks-block">
           <span class="thanks-icon">♡</span>
