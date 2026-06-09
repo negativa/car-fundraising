@@ -146,7 +146,7 @@
                   </div>
                 </section>
 
-      <section class="old-minivan-gallery panel-full" x-init="setGalleryImages(CONFIG.GALLERY_IMAGES)">
+      <section class="old-minivan-gallery panel-full" x-init="setGalleryImages(['assets/old-minivan/old-minivan-01.jpg','assets/old-minivan/old-minivan-02.jpg','assets/old-minivan/old-minivan-03.jpg','assets/old-minivan/old-minivan-04.jpg','assets/old-minivan/old-minivan-05.jpg','assets/old-minivan/old-minivan-06.jpg','assets/old-minivan/old-minivan-07.jpg','assets/old-minivan/old-minivan-08.jpg','assets/old-minivan/old-minivan-09.jpg','assets/old-minivan/old-minivan-10.jpg','assets/old-minivan/old-minivan-11.jpg','assets/old-minivan/old-minivan-12.jpg','assets/old-minivan/old-minivan-13.jpg','assets/old-minivan/old-minivan-14.jpg','assets/old-minivan/old-minivan-15.jpg','assets/old-minivan/old-minivan-16.jpg','assets/old-minivan/old-minivan-17.jpg'])">
         <div class="gallery-head">
           <div>
             <div class="kicker-dark" x-text="text('galleryKicker', ui('galleryKicker'))"></div>
@@ -234,7 +234,7 @@
 
       <section class="info-section panel panel-full">
         <h2 x-text="content.risk.title || text('riskTitle','Чому старий вже небезпечний')"></h2>
-        <p class="section-desc" x-text="content.risk.desc || text('riskDesc','Стан авто вже не дозволяє покладатися на нього для регулярних поїздок. Ремонти виходять дорогими, результати непередбачувані.')"></p>
+        <p class="section-desc" x-text="content.risk.desc || text('riskDesc','Стан авто вже не дозволяє покладатися на нього для регулярних поїздок.')"></p>
         <ul class="bullets bullets-red" x-show="content.risk.items.length" x-cloak>
           <template x-for="item in content.risk.items" :key="item">
             <li x-text="item"></li>
@@ -259,8 +259,6 @@
     </div>
   </div>
 
-  <script src="js/config.js" defer></script>
-  <script src="js/translations.js" defer></script>
   <script src="js/main.js" defer></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </body>
