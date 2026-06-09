@@ -10,7 +10,7 @@ const CONFIG = {
   GOAL: 20000,
 
   // Recent donations limit (how many to show)
-  RECENT_DONATIONS_LIMIT: 8,
+  RECENT_DONATIONS_LIMIT: 15,
 
   // Data refresh interval in milliseconds (60000 = 1 minute)
   REFRESH_INTERVAL: 60000,
