@@ -145,7 +145,83 @@
                     </article>
                   </div>
                 </section>
-      
+
+      <section class="old-minivan-gallery panel-full" x-init="setGalleryImages(['assets/old-minivan/old-minivan-01.jpg','assets/old-minivan/old-minivan-02.jpg','assets/old-minivan/old-minivan-03.jpg','assets/old-minivan/old-minivan-04.jpg','assets/old-minivan/old-minivan-05.jpg','assets/old-minivan/old-minivan-06.jpg','assets/old-minivan/old-minivan-07.jpg','assets/old-minivan/old-minivan-08.jpg','assets/old-minivan/old-minivan-09.jpg','assets/old-minivan/old-minivan-10.jpg','assets/old-minivan/old-minivan-11.jpg','assets/old-minivan/old-minivan-12.jpg','assets/old-minivan/old-minivan-13.jpg','assets/old-minivan/old-minivan-14.jpg','assets/old-minivan/old-minivan-15.jpg','assets/old-minivan/old-minivan-16.jpg','assets/old-minivan/old-minivan-17.jpg'])">
+        <div class="gallery-head">
+          <div>
+            <div class="kicker-dark" x-text="text('galleryKicker', ui('galleryKicker'))"></div>
+            <h2 x-text="text('galleryTitle', ui('galleryTitle'))"></h2>
+            <p class="section-desc" x-text="text('gallerySubtitle', ui('gallerySubtitle'))"></p>
+          </div>
+        </div>
+
+        <div class="gallery-grid">
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-01.jpg')">
+              <img src="assets/old-minivan/old-minivan-01.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-02.jpg')">
+              <img src="assets/old-minivan/old-minivan-02.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-03.jpg')">
+              <img src="assets/old-minivan/old-minivan-03.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-04.jpg')">
+              <img src="assets/old-minivan/old-minivan-04.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-05.jpg')">
+              <img src="assets/old-minivan/old-minivan-05.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-06.jpg')">
+              <img src="assets/old-minivan/old-minivan-06.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-07.jpg')">
+              <img src="assets/old-minivan/old-minivan-07.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-08.jpg')">
+              <img src="assets/old-minivan/old-minivan-08.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-09.jpg')">
+              <img src="assets/old-minivan/old-minivan-09.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-10.jpg')">
+              <img src="assets/old-minivan/old-minivan-10.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-11.jpg')">
+              <img src="assets/old-minivan/old-minivan-11.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-12.jpg')">
+              <img src="assets/old-minivan/old-minivan-12.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-13.jpg')">
+              <img src="assets/old-minivan/old-minivan-13.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-14.jpg')">
+              <img src="assets/old-minivan/old-minivan-14.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-15.jpg')">
+              <img src="assets/old-minivan/old-minivan-15.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-16.jpg')">
+              <img src="assets/old-minivan/old-minivan-16.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-17.jpg')">
+              <img src="assets/old-minivan/old-minivan-17.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+        </div>
+      </section>
+      <div class="gallery-lightbox" x-show="galleryImage" x-cloak @click.self="closeGalleryImage()" @keydown.escape.window="closeGalleryImage()" @keydown.arrow-left.window="prevGalleryImage()" @keydown.arrow-right.window="nextGalleryImage()">
+        <button class="gallery-close" type="button" @click="closeGalleryImage()" :aria-label="ui('closeLabel')">×</button>
+
+        <button class="gallery-nav gallery-prev" type="button" @click.stop="prevGalleryImage()" :aria-label="ui('prevPhoto')">‹</button>
+
+        <img :src="galleryImage" alt="Фото старого мінівена" />
+
+        <button class="gallery-nav gallery-next" type="button" @click.stop="nextGalleryImage()" :aria-label="ui('nextPhoto')">›</button>
+
+        <div class="gallery-counter">
+          <span x-text="galleryIndex + 1"></span>/<span x-text="galleryImages.length"></span>
+        </div>
+      </div>
       <section class="info-section panel panel-full">
         <h2 x-text="content.need.title || text('needTitle','Для чого потрібен новий автомобіль?')"></h2>
         <p class="section-desc" x-text="content.need.desc || text('needDesc','Надійний транспорт потрібен не для зручності, а для того, щоб служіння могло продовжуватися без зривів і ризику на дорозі.')"></p>

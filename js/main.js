@@ -6,6 +6,9 @@ function fundraiserPage() {
     error: '',
     lang: localStorage.getItem('fundraiser_lang') || 'ua',
     theme: localStorage.getItem('fundraiser_theme') || 'light',
+    galleryImage: '',
+    galleryImages: [],
+    galleryIndex: 0,
     textsByLang: { ua: {}, en: {} },
     contentByLang: {
       ua: { need: { title: '', desc: '', items: [] }, risk: { title: '', desc: '', items: [] } },
@@ -29,6 +32,12 @@ function fundraiserPage() {
         loading: 'Завантажуємо дані...',
         copied: 'Посилання скопійовано',
         themeToggle: 'Перемкнути тему',
+        galleryKicker: 'Старий мінівен',
+        galleryTitle: 'Як старий мінівен служив людям',
+        gallerySubtitle: 'Кілька фото, які показують, як цей автомобіль використовувався для поїздок, допомоги, зустрічей і служіння.',
+        prevPhoto: 'Попереднє фото',
+        nextPhoto: 'Наступне фото',
+        closeLabel: 'Закрити',
         heroKicker: 'Збір на транспорт',
         familyKicker: 'Наша сімʼя',
         familyTitle: 'Наша сімʼя',
@@ -58,6 +67,12 @@ function fundraiserPage() {
         loading: 'Loading data...',
         copied: 'Link copied',
         themeToggle: 'Toggle theme',
+        galleryKicker: 'Old minivan',
+        galleryTitle: 'How the old minivan served people',
+        gallerySubtitle: 'A few photos showing how this vehicle was used for trips, help, meetings, and ministry.',
+        prevPhoto: 'Previous photo',
+        nextPhoto: 'Next photo',
+        closeLabel: 'Close',
         heroKicker: 'Transport fundraiser',
         familyKicker: 'Our family',
         familyTitle: 'Our family',
@@ -304,6 +319,34 @@ function fundraiserPage() {
 
     formatNumber(value) {
       return '$' + Math.round(Number(value) || 0).toLocaleString('en-US');
+    },
+
+    setGalleryImages(images) {
+      this.galleryImages = Array.isArray(images) ? images : [];
+    },
+
+    openGalleryImage(path) {
+      const index = this.galleryImages.indexOf(path);
+      this.galleryIndex = index >= 0 ? index : 0;
+      this.galleryImage = path;
+      document.body.style.overflow = 'hidden';
+    },
+
+    closeGalleryImage() {
+      this.galleryImage = '';
+      document.body.style.overflow = '';
+    },
+
+    nextGalleryImage() {
+      if (!this.galleryImages.length || !this.galleryImage) return;
+      this.galleryIndex = (this.galleryIndex + 1) % this.galleryImages.length;
+      this.galleryImage = this.galleryImages[this.galleryIndex];
+    },
+
+    prevGalleryImage() {
+      if (!this.galleryImages.length || !this.galleryImage) return;
+      this.galleryIndex = (this.galleryIndex - 1 + this.galleryImages.length) % this.galleryImages.length;
+      this.galleryImage = this.galleryImages[this.galleryIndex];
     },
 
     async sharePage() {
