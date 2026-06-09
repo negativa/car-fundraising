@@ -1,423 +1,367 @@
-const FUNDRAISING_CONFIG = {
-  // Ціль збору в доларах США.
-  goalAmount: 20000,
 
-  // Таблиця має бути доступна для перегляду.
-  googleSheetId: '1IvyMANxV3IXFEdv3bua50zqwJBO9sxZhCFDkaNRUJJc',
-
-  // Вкладка з донатами: Дата | Сума, $ | платіжна система | Країна
-  supportersSheetName: 'Supporters',
-  supportersSheetGid: '',
-  supportersCsvUrl: '',
-
-  // Вкладка з текстами: Опис
-  contentSheetName: 'Опис',
-  contentSheetGid: '',
-  contentCsvUrl: '',
-};
-
-const DEFAULT_CONTENT = {
-  eyebrow: '🚐 Збір на новий автомобіль',
-  heroTitle: 'Надійний транспорт для великої сімʼї та служіння',
-  mainTitle: 'Надійний транспорт для великої сімʼї',
-  heroParagraph: 'Старий мікроавтобус багато років возив дітей, команду, допомогу та людей. Тепер через критичну корозію й постійні поломки він став ризиком у дорозі. Ми збираємо на безпечний автомобіль для служіння в Підгайному, навколишніх селах і Кухарях.',
-  oldPhotoCaption: 'Старий Chrysler Grand Voyager 2007р',
-  targetPhotoCaption: 'Новий Chrysler Pacifica 2020р',
-  useTitle: 'Для чого потрібен новий автомобіль',
-  useDesc: 'Надійний транспорт потрібен не для зручності, а для того, щоб служіння могло продовжуватися без зривів і ризику на дорозі.',
-  useItems: [
-    'Підвіз дітей на біблійні уроки та інші зустрічі.',
-    'Поїздки команди служіння в Підгайне та навколишні села.',
-    'Відвідування людей, доставка допомоги та участь у подіях.',
-    'Безпечніші та спокійніші поїздки без постійних ремонтів.',
-  ],
-  dangerTitle: 'Чому старий вже небезпечний',
-  dangerDesc: 'Стан авто вже не дозволяє покладатися на нього для регулярних поїздок.',
-  dangerItems: [
-    'Критична корозія арок, порогів і нижньої частини кузова.',
-    'Періодичні поломки та вимушені ремонти в дорозі.',
-    'Ризик, що авто не витримає навантаження під час служіння.',
-    'Ремонт уже не вирішує проблему комплексно.',
-  ],
-};
-
-const GALLERY_PHOTOS = [
-  { src: 'assets/service-side.jpg', caption: 'Стан кузова та арок' },
-  { src: 'assets/breakdown-bridge.jpg', caption: 'Зупинка в дорозі' },
-  { src: 'assets/road-tow.jpg', caption: 'Ще один виїзд' },
-  { src: 'assets/rust-wheelarch.jpg', caption: 'Корозія арки' },
-  { src: 'assets/rust-close-1.jpg', caption: 'Пороги та низ кузова' },
-  { src: 'assets/rust-close-2.jpg', caption: 'Сильна корозія' },
-];
-
-function cloneContent() {
-  return JSON.parse(JSON.stringify(DEFAULT_CONTENT));
-}
-
-document.addEventListener('alpine:init', () => {
-  Alpine.data('fundraisingPage', () => ({
-    raised: 0,
-    goal: FUNDRAISING_CONFIG.goalAmount,
-    updated: '—',
-    supporters: 0,
-    sheetStatus: 'Завантаження даних...',
+function fundraiserPage() {
+  return {
+    sheetId: '1IvyMANxV3IXFEdv3bua50zqwJBO9sxZhCFDkaNRUJJc',
+    loading: true,
+    error: '',
+    lang: localStorage.getItem('fundraiser_lang') || 'ua',
+    theme: localStorage.getItem('fundraiser_theme') || 'light',
+    galleryImage: '',
+    galleryImages: [],
+    galleryIndex: 0,
+    textsByLang: { ua: {}, en: {} },
+    contentByLang: {
+      ua: { need: { title: '', desc: '', items: [] }, risk: { title: '', desc: '', items: [] } },
+      en: { need: { title: '', desc: '', items: [] }, risk: { title: '', desc: '', items: [] } }
+    },
     donations: [],
-    content: cloneContent(),
-    galleryPhotos: GALLERY_PHOTOS,
-    activePayment: 'mono',
-    toastMessage: 'Скопійовано',
-    toastVisible: false,
-    imageModalOpen: false,
-    activeImage: { src: '', caption: '' },
-    circumference: 2 * Math.PI * 52,
+    goal: 20000,
 
-    init() {
-      this.loadSupporters();
-      this.loadContent();
-    },
-
-    get percent() {
-      const safeGoal = Number(this.goal) > 0 ? Number(this.goal) : 1;
-      return Math.max(0, Math.min(100, (Number(this.raised) / safeGoal) * 100));
-    },
-
-    get percentRounded() {
-      return Math.round(this.percent);
-    },
-
-    get progressOffset() {
-      return this.circumference - (this.circumference * this.percent / 100);
-    },
-
-    get statusText() {
-      if (this.percent >= 100) return 'Ціль досягнута';
-      if (this.percent >= 75) return 'Майже біля цілі';
-      if (this.percent >= 35) return 'Збір активно триває';
-      return 'Триває збір';
-    },
-
-    get visibleDonations() {
-      return [...this.donations].reverse();
-    },
-
-    fmtCurrency(value) {
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        maximumFractionDigits: 0,
-      }).format(Number(value) || 0);
-    },
-
-    fmtDonationAmount(donation) {
-      const amount = Number(donation.amount) || 0;
-      const currency = String(donation.currency || 'USD').toUpperCase();
-      if (currency === 'EUR') return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(amount);
-      if (currency === 'UAH') return new Intl.NumberFormat('uk-UA', { style: 'currency', currency: 'UAH', maximumFractionDigits: 0 }).format(amount);
-      return this.fmtCurrency(amount);
-    },
-
-    shortDate(value) {
-      const raw = String(value || '').trim();
-      const match = raw.match(/^(\d{1,2})[./-](\d{1,2})[./-](\d{2,4})$/);
-      if (!match) return raw || '—';
-      const day = match[1].padStart(2, '0');
-      const month = match[2].padStart(2, '0');
-      const year = match[3].slice(-2);
-      return `${day}.${month}.${year}`;
-    },
-
-    showToast(text = 'Скопійовано') {
-      this.toastMessage = text;
-      this.toastVisible = true;
-      window.clearTimeout(this._toastTimer);
-      this._toastTimer = window.setTimeout(() => { this.toastVisible = false; }, 1800);
-    },
-
-    async copy(text) {
-      try {
-        await navigator.clipboard.writeText(text);
-        this.showToast('Скопійовано');
-      } catch (error) {
-        this.showToast('Не вдалося скопіювати');
+    uiText: {
+      ua: {
+        dateLabel: 'Дата',
+        amountLabel: 'Сума, $',
+        sourceLabel: 'Звідки пожертва',
+        progressLabel: 'зібрано',
+        raisedLabel: 'зібрано',
+        goalLabel: 'ціль',
+        donorsLabel: 'благодійників',
+        donateButton: 'Підтримати збір',
+        shareButton: 'Поділитися',
+        donationsTitle: 'Останні пожертви',
+        loading: 'Завантажуємо дані...',
+        copied: 'Посилання скопійовано',
+        themeToggle: 'Перемкнути тему',
+        galleryKicker: 'Старий мінівен',
+        galleryTitle: 'Як старий мінівен служив людям',
+        gallerySubtitle: 'Кілька фото, які показують, як цей автомобіль використовувався для поїздок, допомоги, зустрічей і служіння.',
+        prevPhoto: 'Попереднє фото',
+        nextPhoto: 'Наступне фото',
+        closeLabel: 'Закрити',
+        heroKicker: 'Збір на транспорт',
+        familyKicker: 'Наша сімʼя',
+        familyTitle: 'Наша сімʼя',
+        thanks: 'Дякуємо за вашу підтримку та молитви!',
+        paymentTitle: 'Реквізити для підтримки',
+        paymentSubtitle: 'Оберіть зручний спосіб переказу.',
+        monoTitle: 'mono банка',
+        monoDetails: 'Посилання на банку або номер картки можна додати у полі monodetails_ua.',
+        paypalTitle: 'PayPal',
+        paypalDetails: 'PayPal-посилання або email можна додати у полі paypaldetails_ua.',
+        sepaTitle: 'Єврова карта / SEPA',
+        sepaDetails: 'IBAN, отримувач та призначення платежу можна додати у полі sepadetails_ua.',
+        swiftTitle: 'Доларова карта / SWIFT',
+        swiftDetails: 'SWIFT-реквізити для доларового переказу можна додати у полі swiftdetails_ua.'
+      },
+      en: {
+        dateLabel: 'Date',
+        amountLabel: 'Amount, $',
+        sourceLabel: 'Donation source',
+        progressLabel: 'funded',
+        raisedLabel: 'raised',
+        goalLabel: 'goal',
+        donorsLabel: 'donors',
+        donateButton: 'Donate now',
+        shareButton: 'Share',
+        donationsTitle: 'Latest donations',
+        loading: 'Loading data...',
+        copied: 'Link copied',
+        themeToggle: 'Toggle theme',
+        galleryKicker: 'Old minivan',
+        galleryTitle: 'How the old minivan served people',
+        gallerySubtitle: 'A few photos showing how this vehicle was used for trips, help, meetings, and ministry.',
+        prevPhoto: 'Previous photo',
+        nextPhoto: 'Next photo',
+        closeLabel: 'Close',
+        heroKicker: 'Transport fundraiser',
+        familyKicker: 'Our family',
+        familyTitle: 'Our family',
+        thanks: 'Thank you for your support and prayers!',
+        paymentTitle: 'Donation details',
+        paymentSubtitle: 'Choose a convenient transfer method.',
+        monoTitle: 'mono jar',
+        monoDetails: 'Add the mono jar link or card number in monodetails_en.',
+        paypalTitle: 'PayPal',
+        paypalDetails: 'Add a PayPal link or email in paypaldetails_en.',
+        sepaTitle: 'Euro card / SEPA',
+        sepaDetails: 'Add IBAN, recipient and payment purpose in sepadetails_en.',
+        swiftTitle: 'Dollar card / SWIFT',
+        swiftDetails: 'Add SWIFT details for USD transfers in swiftdetails_en.'
       }
     },
 
-    openImage(src, caption = '') {
-      this.activeImage = { src, caption };
-      this.imageModalOpen = true;
-      document.body.classList.add('modal-lock');
+    async init() {
+      await this.loadAll();
+      setInterval(() => this.loadAll(false), 60000);
     },
 
-    closeImage() {
-      this.imageModalOpen = false;
-      document.body.classList.remove('modal-lock');
+    setLang(nextLang) {
+      this.lang = nextLang === 'en' ? 'en' : 'ua';
+      localStorage.setItem('fundraiser_lang', this.lang);
+      document.documentElement.lang = this.lang === 'en' ? 'en' : 'uk';
     },
 
-    buildSheetUrl({ directUrl = '', sheetName = '', gid = '' } = {}) {
-      if (directUrl) return directUrl;
-      if (!FUNDRAISING_CONFIG.googleSheetId) return '';
-      const id = FUNDRAISING_CONFIG.googleSheetId;
-      if (gid) return `https://docs.google.com/spreadsheets/d/${id}/export?format=csv&gid=${encodeURIComponent(gid)}`;
-      if (sheetName) return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
-      return '';
+    toggleTheme() {
+      this.theme = this.theme === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('fundraiser_theme', this.theme);
     },
 
-    parseCsv(text) {
-      const rows = [];
-      let row = [];
-      let cell = '';
-      let inQuotes = false;
+    ui(key) {
+      return this.text(key, this.uiText[this.lang]?.[key] || this.uiText.ua[key] || '');
+    },
 
-      for (let i = 0; i < text.length; i += 1) {
-        const ch = text[i];
-        const next = text[i + 1];
+    text(key, fallback = '') {
+      const lowerKey = String(key || '').toLowerCase();
+      return this.textsByLang[this.lang]?.[key]
+        || this.textsByLang[this.lang]?.[lowerKey]
+        || this.textsByLang.ua?.[key]
+        || this.textsByLang.ua?.[lowerKey]
+        || fallback;
+    },
 
-        if (ch === '"') {
-          if (inQuotes && next === '"') {
-            cell += '"';
-            i += 1;
-          } else {
-            inQuotes = !inQuotes;
-          }
-        } else if (ch === ',' && !inQuotes) {
-          row.push(cell.trim());
-          cell = '';
-        } else if ((ch === '\n' || ch === '\r') && !inQuotes) {
-          if (ch === '\r' && next === '\n') i += 1;
-          row.push(cell.trim());
-          if (row.some(value => value !== '')) rows.push(row);
-          row = [];
-          cell = '';
-        } else {
-          cell += ch;
+    get content() {
+      const current = this.contentByLang[this.lang] || this.contentByLang.ua;
+      return {
+        need: {
+          title: current.need.title || this.contentByLang.ua.need.title,
+          desc: current.need.desc || this.contentByLang.ua.need.desc,
+          items: current.need.items.length ? current.need.items : this.contentByLang.ua.need.items
+        },
+        risk: {
+          title: current.risk.title || this.contentByLang.ua.risk.title,
+          desc: current.risk.desc || this.contentByLang.ua.risk.desc,
+          items: current.risk.items.length ? current.risk.items : this.contentByLang.ua.risk.items
         }
-      }
-
-      row.push(cell.trim());
-      if (row.some(value => value !== '')) rows.push(row);
-      return rows;
+      };
     },
 
-    normalizeHeader(value) {
-      return String(value || '')
-        .toLowerCase()
-        .replace(/\s+/g, '')
-        .replace(/[ʼ'’`]/g, '')
-        .trim();
+    get totalRaised() {
+      return this.donations.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
     },
 
-    findColumn(headers, variants) {
-      const normalized = headers.map(header => this.normalizeHeader(header));
-      return normalized.findIndex(header => variants.some(variant => header.includes(variant)));
+    get donorCount() {
+      return this.donations.length;
     },
 
-    parseAmountWithCurrency(raw) {
-      if (raw == null) return { amount: Number.NaN, currency: 'USD' };
-      const original = String(raw);
-      let currency = 'USD';
-      if (/€|eur/i.test(original)) currency = 'EUR';
-      if (/₴|uah|грн/i.test(original)) currency = 'UAH';
-
-      let value = original
-        .replace(/\u00A0/g, ' ')
-        .replace(/usd|eur|uah|дол|долар|грн|\$|€|₴/gi, '')
-        .replace(/[^\d,.-]/g, '')
-        .trim();
-
-      if (!value) return { amount: Number.NaN, currency };
-
-      const hasComma = value.includes(',');
-      const hasDot = value.includes('.');
-
-      if (hasComma && hasDot) {
-        value = value.replace(/,/g, '');
-      } else if (hasComma) {
-        const parts = value.split(',');
-        const last = parts[parts.length - 1];
-        if (last.length <= 2) value = parts.slice(0, -1).join('').replace(/,/g, '') + '.' + last;
-        else value = value.replace(/,/g, '');
-      }
-
-      return { amount: Number(value), currency };
+    get progress() {
+      return this.goal ? Math.min(100, Math.round((this.totalRaised / this.goal) * 100)) : 0;
     },
 
-    async fetchCsv(url) {
-      const response = await fetch(url, { cache: 'no-store' });
-      if (!response.ok) throw new Error(`Не вдалося завантажити CSV: ${response.status}`);
-      return response.text();
+    get recentDonations() {
+      return [...this.donations]
+        .sort((a, b) => this.dateValue(b.date) - this.dateValue(a.date))
+        .slice(0, 8)
+        .map(item => ({
+          ...item,
+          source: item[`source_${this.lang}`] || item.source_ua || item.source_en || item.source || ''
+        }));
     },
 
-    async loadSupporters() {
-      const csvUrl = this.buildSheetUrl({
-        directUrl: FUNDRAISING_CONFIG.supportersCsvUrl,
-        sheetName: FUNDRAISING_CONFIG.supportersSheetName,
-        gid: FUNDRAISING_CONFIG.supportersSheetGid,
-      });
-
-      if (!csvUrl) {
-        this.sheetStatus = 'Google Таблицю ще не підключено';
-        return;
-      }
+    async loadAll(showLoading = true) {
+      if (showLoading) this.loading = true;
+      this.error = '';
 
       try {
-        const csv = await this.fetchCsv(csvUrl);
-        const rows = this.parseCsv(csv);
-        if (rows.length < 2) throw new Error('У вкладці Supporters немає рядків з донатами');
+        const textsData = await this.fetchSheet('Texts', { withHeaderRow: false });
+        const donationsData = await this.fetchSheet('Donations', { withHeaderRow: true });
 
-        const headers = rows[0];
-        const dateIndex = this.findColumn(headers, ['дата', 'date']);
-        const amountIndex = this.findColumn(headers, ['сума', 'amount']);
-        const paymentIndex = this.findColumn(headers, ['платіж', 'платеж', 'payment', 'system', 'система']);
-        const countryIndex = this.findColumn(headers, ['країна', 'краина', 'country', 'from']);
-        const currencyIndex = this.findColumn(headers, ['валюта', 'currency']);
+        const parsedTexts = this.parseContent(textsData.rows || []);
+        this.textsByLang = parsedTexts.textsByLang;
+        this.contentByLang = parsedTexts.contentByLang;
+        this.goal = parsedTexts.goal || this.goal;
 
-        const safeDateIndex = dateIndex >= 0 ? dateIndex : 0;
-        const safeAmountIndex = amountIndex >= 0 ? amountIndex : 1;
-
-        const donations = [];
-        let total = 0;
-        let lastDate = '';
-
-        rows.slice(1).forEach((cols, index) => {
-          const date = cols[safeDateIndex] || '';
-          const amountInfo = this.parseAmountWithCurrency(cols[safeAmountIndex]);
-          if (!Number.isFinite(amountInfo.amount)) return;
-
-          const explicitCurrency = currencyIndex >= 0 ? String(cols[currencyIndex] || '').trim().toUpperCase() : '';
-          const currency = explicitCurrency || amountInfo.currency || 'USD';
-          const payment = paymentIndex >= 0 ? cols[paymentIndex] || '' : '';
-          const country = countryIndex >= 0 ? cols[countryIndex] || '' : '';
-
-          donations.push({
-            id: `${index}-${date}-${amountInfo.amount}-${payment}-${country}`,
-            date,
-            amount: amountInfo.amount,
-            currency,
-            payment,
-            country,
-          });
-
-          // Збір ведеться в доларах. Якщо суми в таблиці без валюти — вони рахуються як USD.
-          total += amountInfo.amount;
-          if (date) lastDate = date;
-        });
-
-        this.donations = donations;
-        this.raised = total;
-        this.goal = FUNDRAISING_CONFIG.goalAmount;
-        this.updated = lastDate || '—';
-        this.supporters = donations.length;
-        this.sheetStatus = 'Дані оновлено з Google Таблиці';
-      } catch (error) {
-        console.error(error);
-        this.donations = [];
-        this.raised = 0;
-        this.updated = '—';
-        this.supporters = 0;
-        this.sheetStatus = 'Не вдалося зчитати вкладку Supporters';
+        this.donations = this.parseDonations(donationsData.rows || [], donationsData.headers || []);
+      } catch (e) {
+        console.error(e);
+        this.error = this.lang === 'en'
+          ? 'Could not load data from Google Sheets. Check sharing access and tab names “Texts” and “Donations”.'
+          : 'Не вдалося завантажити дані з Google Таблиці. Перевірте доступ до таблиці та назви вкладок “Texts” і “Donations”.';
+      } finally {
+        this.loading = false;
       }
     },
 
-    async loadContent() {
-      const csvUrl = this.buildSheetUrl({
-        directUrl: FUNDRAISING_CONFIG.contentCsvUrl,
-        sheetName: FUNDRAISING_CONFIG.contentSheetName,
-        gid: FUNDRAISING_CONFIG.contentSheetGid,
-      });
+    fetchSheet(sheetName, { withHeaderRow = false } = {}) {
+      return new Promise((resolve, reject) => {
+        const cb = '__sheet_cb_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+        const script = document.createElement('script');
+        const params = [
+          'tqx=' + encodeURIComponent('out:json;responseHandler:' + cb),
+          'sheet=' + encodeURIComponent(sheetName),
+          'tq=' + encodeURIComponent('select *'),
+          '_=' + Date.now()
+        ];
+        if (!withHeaderRow) params.push('headers=0');
 
-      if (!csvUrl) return;
-
-      try {
-        const csv = await this.fetchCsv(csvUrl);
-        const rows = this.parseCsv(csv);
-        this.applyContentRows(rows);
-      } catch (error) {
-        console.warn('Не вдалося зчитати вкладку Опис:', error);
-      }
-    },
-
-    applyContentRows(rows) {
-      const next = cloneContent();
-      next.useItems = [];
-      next.dangerItems = [];
-      let leftTitleSet = false;
-      let rightTitleSet = false;
-      let leftDescSet = false;
-      let rightDescSet = false;
-
-      const setDirect = (key, value) => {
-        const k = this.normalizeHeader(key);
-        if (!value) return true;
-        const map = {
-          herotitle: 'heroTitle',
-          maintitle: 'mainTitle',
-          heroparagraph: 'heroParagraph',
-          paragraph: 'heroParagraph',
-          eyebrow: 'eyebrow',
-          oldphotocaption: 'oldPhotoCaption',
-          targetphotocaption: 'targetPhotoCaption',
-          usetitle: 'useTitle',
-          usedesc: 'useDesc',
-          dangertitle: 'dangerTitle',
-          dangerdesc: 'dangerDesc',
+        const timeout = setTimeout(() => cleanup(() => reject(new Error('timeout'))), 12000);
+        const cleanup = (done) => {
+          clearTimeout(timeout);
+          try { delete window[cb]; } catch (e) { window[cb] = undefined; }
+          script.remove();
+          done && done();
         };
-        if (map[k]) {
-          next[map[k]] = value;
-          return true;
-        }
-        return false;
+
+        window[cb] = (json) => {
+          cleanup(() => {
+            if (!json || json.status === 'error') {
+              return reject(new Error(json?.errors?.[0]?.detailed_message || 'sheet error'));
+            }
+
+            const cellToText = (cell) => {
+              if (!cell) return '';
+              if (cell.f !== undefined && cell.f !== null) return String(cell.f).trim();
+              if (cell.v === undefined || cell.v === null) return '';
+              return String(cell.v).trim();
+            };
+
+            const rows = (json.table?.rows || []).map(row => (row.c || []).map(cellToText));
+            const headers = withHeaderRow
+              ? (json.table?.cols || []).map(col => String(col?.label || '').trim())
+              : [];
+
+            resolve({ headers, rows });
+          });
+        };
+
+        script.onerror = () => cleanup(() => reject(new Error('network')));
+        script.src = `https://docs.google.com/spreadsheets/d/${this.sheetId}/gviz/tq?${params.join('&')}`;
+        document.head.appendChild(script);
+      });
+    },
+
+    parseContent(rows) {
+      const result = {
+        textsByLang: { ua: {}, en: {} },
+        contentByLang: {
+          ua: { need: { title: '', desc: '', items: [] }, risk: { title: '', desc: '', items: [] } },
+          en: { need: { title: '', desc: '', items: [] }, risk: { title: '', desc: '', items: [] } }
+        },
+        goal: 0
       };
 
-      const processPair = (rawKey, rawValue, side) => {
-        const key = this.normalizeHeader(rawKey);
-        const value = String(rawValue || '').trim();
-        if (!key || !value) return;
-        if (setDirect(rawKey, value)) return;
-
-        const isLeft = side === 'left';
-        if (['header', 'заголовок', 'головнийзаголовок'].includes(key)) {
-          next.heroTitle = value;
-          next.mainTitle = value;
-          return;
-        }
-        if (['paragraph', 'параграф', 'текст', 'опис'].includes(key)) {
-          next.heroParagraph = value;
-          return;
-        }
-        if (['title', 'назва'].includes(key)) {
-          if (isLeft) {
-            if (!leftTitleSet) next.useTitle = value;
-            leftTitleSet = true;
-          } else {
-            if (!rightTitleSet) next.dangerTitle = value;
-            rightTitleSet = true;
-          }
-          return;
-        }
-        if (['desc', 'description', 'описблоку'].includes(key)) {
-          if (isLeft) {
-            if (!leftDescSet) next.useDesc = value;
-            leftDescSet = true;
-          } else {
-            if (!rightDescSet) next.dangerDesc = value;
-            rightDescSet = true;
-          }
-          return;
-        }
-        if (['item', 'пункт'].includes(key)) {
-          if (isLeft) next.useItems.push(value);
-          else next.dangerItems.push(value);
-        }
+      const normalize = (key) => String(key || '').trim();
+      const splitKey = (rawKey) => {
+        const key = normalize(rawKey);
+        const match = key.match(/^(.*)_(ua|en)$/i);
+        if (match) return { base: match[1].toLowerCase(), lang: match[2].toLowerCase() };
+        return { base: key.toLowerCase(), lang: 'ua' };
       };
 
-      rows.forEach(cols => {
-        processPair(cols[0], cols[1], 'left');
-        processPair(cols[2], cols[3], 'right');
+      const applyEntry = (rawKey, value) => {
+        const v = String(value || '').trim();
+        if (!rawKey || !v) return;
+
+        const { base, lang } = splitKey(rawKey);
+        const targetLang = lang === 'en' ? 'en' : 'ua';
+
+        if (['goal', 'target', 'ціль', 'цільова сума'].includes(base)) {
+          result.goal = this.parseAmount(v);
+          return;
+        }
+
+        if (base === 'header') result.textsByLang[targetLang].header = v;
+        else if (base === 'paragraph') result.textsByLang[targetLang].paragraph = v;
+        else if (base === 'title1') result.contentByLang[targetLang].need.title = v;
+        else if (base === 'desc1') result.contentByLang[targetLang].need.desc = v;
+        else if (base === 'item1') result.contentByLang[targetLang].need.items.push(v);
+        else if (base === 'title2') result.contentByLang[targetLang].risk.title = v;
+        else if (base === 'desc2') result.contentByLang[targetLang].risk.desc = v;
+        else if (base === 'item2') result.contentByLang[targetLang].risk.items.push(v);
+        else result.textsByLang[targetLang][base] = v;
+      };
+
+      rows.forEach((row) => {
+        applyEntry(row[0], row[1]);
+        applyEntry(row[2], row[3]);
       });
 
-      if (next.useItems.length === 0) next.useItems = [...DEFAULT_CONTENT.useItems];
-      if (next.dangerItems.length === 0) next.dangerItems = [...DEFAULT_CONTENT.dangerItems];
-      this.content = next;
+      return result;
     },
-  }));
-});
+
+    parseDonations(rows, headers) {
+      const normalizedHeaders = (headers || []).map(h => String(h || '').trim().toLowerCase());
+
+      const findHeaderIndex = (variants, fallback) => {
+        const idx = normalizedHeaders.findIndex((header) => variants.some(v => header === v || header.includes(v)));
+        return idx >= 0 ? idx : fallback;
+      };
+
+      const dateIndex = findHeaderIndex(['date', 'дата'], 0);
+      const amountIndex = findHeaderIndex(['amount', 'сума'], 1);
+      const systemIndex = findHeaderIndex(['payment system', 'payment', 'платіжна система', 'платіж'], 2);
+      const countryUaIndex = findHeaderIndex(['country_ua', 'країна', 'country ua'], 3);
+      const countryEnIndex = findHeaderIndex(['country_en', 'country en'], 4);
+
+      return (rows || [])
+        .map((row) => ({
+          date: String(row[dateIndex] || '').trim(),
+          amount: this.parseAmount(row[amountIndex]),
+          system: String(row[systemIndex] || '').trim(),
+          source_ua: String(row[countryUaIndex] || '').trim(),
+          source_en: String(row[countryEnIndex] || row[countryUaIndex] || '').trim()
+        }))
+        .filter(item => item.date && item.amount > 0)
+        .sort((a, b) => this.dateValue(b.date) - this.dateValue(a.date));
+    },
+
+    parseAmount(value) {
+      return Number(String(value || '').replace(/[^0-9,.-]/g, '').replace(',', '.')) || 0;
+    },
+
+    dateValue(value) {
+      const m = String(value || '').match(/(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{2,4})/);
+      return m ? new Date(Number(m[3]) < 100 ? 2000 + Number(m[3]) : Number(m[3]), Number(m[2]) - 1, Number(m[1])).getTime() : 0;
+    },
+
+    formatMoney(value) {
+      return '$' + Math.round(Number(value) || 0).toLocaleString('en-US');
+    },
+
+    formatNumber(value) {
+      return '$' + Math.round(Number(value) || 0).toLocaleString('en-US');
+    },
+
+    setGalleryImages(images) {
+      this.galleryImages = Array.isArray(images) ? images : [];
+    },
+
+    openGalleryImage(path) {
+      const index = this.galleryImages.indexOf(path);
+      this.galleryIndex = index >= 0 ? index : 0;
+      this.galleryImage = path;
+      document.body.style.overflow = 'hidden';
+    },
+
+    closeGalleryImage() {
+      this.galleryImage = '';
+      document.body.style.overflow = '';
+    },
+
+    nextGalleryImage() {
+      if (!this.galleryImages.length || !this.galleryImage) return;
+      this.galleryIndex = (this.galleryIndex + 1) % this.galleryImages.length;
+      this.galleryImage = this.galleryImages[this.galleryIndex];
+    },
+
+    prevGalleryImage() {
+      if (!this.galleryImages.length || !this.galleryImage) return;
+      this.galleryIndex = (this.galleryIndex - 1 + this.galleryImages.length) % this.galleryImages.length;
+      this.galleryImage = this.galleryImages[this.galleryIndex];
+    },
+
+    async sharePage() {
+      const data = {
+        title: this.text('header', 'Збір на транспорт'),
+        text: this.text('paragraph', 'Підтримайте збір.'),
+        url: location.href
+      };
+
+      if (navigator.share) {
+        await navigator.share(data).catch(() => {});
+      } else {
+        await navigator.clipboard?.writeText(location.href);
+        alert(this.ui('copied'));
+      }
+    }
+  };
+}

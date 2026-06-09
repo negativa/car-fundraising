@@ -1,189 +1,265 @@
 <!doctype html>
 <html lang="uk">
-
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Збір на автомобіль для служіння</title>
-  <meta name="description" content="Збір у доларах на надійний автомобіль для служіння в Підгайному, навколишніх селах і модульному містечку." />
-  <meta property="og:title" content="Збір на автомобіль для служіння" />
-  <meta property="og:description" content="Допоможіть зібрати кошти на безпечний автомобіль для служіння людям." />
-  <meta property="og:image" content="assets/target-red-car.png" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Збір на мінівен для служіння</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
-
-<body x-data="fundraisingPage()" x-init="init()" @keydown.escape.window="closeImage()">
-  <main class="page" id="top">
-    <div class="layout">
-      <section class="left-stack">
-        <button class="hero-photo photo-trigger" type="button" @click="openImage('assets/target-red-car.png', content.targetPhotoCaption)">
-          <img src="assets/target-red-car.png" alt="Новий автомобіль, на який збираються кошти" />
-          <div class="hero-gradient"></div>
-          <h1 x-text="content.heroTitle">Надійний транспорт для великої сімʼї та служіння</h1>
-        </button>
-
-        <article class="panel story-card">
-          <div class="eyebrow" x-text="content.eyebrow">🚐 Збір на новий автомобіль</div>
-          <h2 x-text="content.mainTitle">Надійний транспорт для великої сімʼї</h2>
-          <div class="story-row">
-            <button class="old-car-thumb photo-trigger" type="button" @click="openImage('assets/current-car.jpg', content.oldPhotoCaption)">
-              <img src="assets/current-car.jpg" alt="Старий автомобіль служіння" />
-              <span x-text="content.oldPhotoCaption">Старий Chrysler Grand Voyager 2007р</span>
-            </button>
-            <p x-text="content.heroParagraph">Старий мікроавтобус багато років возив дітей, команду, допомогу та людей. Тепер через критичну корозію й постійні поломки він став ризиком у дорозі. Ми збираємо на безпечний автомобіль для служіння в Підгайному, навколишніх селах і Кухарях.</p>
+<body x-data="fundraiserPage()" x-init="init()" :class="theme === 'dark' ? 'theme-dark' : 'theme-light'">
+  <div class="shell">
+    <div class="page-card">
+      <header class="site-header">
+        <a class="brand" href="#" aria-label="Pidhaine Ministry">
+          <span class="brand-mark" x-text="text('logoSymbol','✝')"></span>
+          <span class="brand-name" x-text="text('siteName','Pidhaine Ministry')"></span>
+        </a>
+        <div class="header-actions">
+          <div class="lang-switch" aria-label="Language switcher">
+            <button type="button" :class="{active: lang === 'ua'}" @click="setLang('ua')">UA</button>
+            <button type="button" :class="{active: lang === 'en'}" @click="setLang('en')">EN</button>
           </div>
-        </article>
 
-        <section class="panel content-card" id="why">
-          <h2 class="section-title" x-text="content.useTitle">Для чого потрібен новий автомобіль</h2>
-          <p class="muted" x-text="content.useDesc">Надійний транспорт потрібен не для зручності, а для того, щоб служіння могло продовжуватися без зривів і ризику на дорозі.</p>
-          <ul class="check-list">
-            <template x-for="item in content.useItems" :key="item">
-              <li x-text="item"></li>
-            </template>
-          </ul>
-        </section>
+          <button class="theme-toggle" type="button" @click="toggleTheme()" :aria-label="ui('themeToggle')">
+            <span x-text="theme === 'dark' ? '☀' : '☾'"></span>
+          </button>
+          <button class="menu-btn" type="button" aria-label="Menu">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </header>
 
-        <section class="panel content-card danger-card">
-          <h2 class="section-title" x-text="content.dangerTitle">Чому старий вже небезпечний</h2>
-          <p class="muted" x-text="content.dangerDesc">Стан авто вже не дозволяє покладатися на нього для регулярних поїздок.</p>
-          <ul class="check-list danger">
-            <template x-for="item in content.dangerItems" :key="item">
-              <li x-text="item"></li>
-            </template>
-          </ul>
-        </section>
-
-        <section class="panel gallery-card" id="photos">
-          <h2 class="section-title">Фото стану старого автомобіля</h2>
-          <div class="gallery" aria-label="Фото стану старого автомобіля">
-            <template x-for="photo in galleryPhotos" :key="photo.src">
-              <button class="gallery-item photo-trigger" type="button" @click="openImage(photo.src, photo.caption)">
-                <img :src="photo.src" :alt="photo.caption" />
-                <span x-text="photo.caption"></span>
-              </button>
-            </template>
-          </div>
-        </section>
+      <section class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-copy">
+          <div class="kicker" x-text="text('heroKicker', ui('heroKicker'))"></div>
+          <h1 x-text="text('header','Збір на мінівен для сімʼї та служіння')"></h1>
+          <p x-text="text('paragraph','Старий мікроавтобус багато років возив дітей, команду, допомогу та людей. Тепер через критичну корозію й постійні поломки він став ризиком у дорозі.')"></p>
+        </div>
       </section>
 
-      <aside class="right-stack">
-        <section class="panel progress-panel" id="progress">
-          <div class="ring-wrap" aria-label="Прогрес збору">
-            <svg class="ring" viewBox="0 0 120 120" role="img">
-              <circle class="track" cx="60" cy="60" r="52"></circle>
-              <circle class="bar" cx="60" cy="60" r="52"
-                :style="{ strokeDasharray: circumference, strokeDashoffset: progressOffset }"></circle>
-            </svg>
-            <div class="center">
-              <div class="percent"><span x-text="percentRounded">0</span><span class="sign">%</span></div>
-              <div class="status" x-text="statusText">Триває збір</div>
+      <section class="overview-grid">
+        <div class="overview-main panel">
+          <div class="panel-head">
+            <h2 x-text="ui('donationsTitle')"></h2>
+          </div>
+
+          <div class="status" x-show="loading" x-cloak x-text="ui('loading')"></div>
+          <div class="error" x-show="error" x-text="error" x-cloak></div>
+
+          <div class="table-wrap" x-show="!loading && recentDonations.length" x-cloak>
+            <table class="donation-table">
+              <thead>
+                <tr>
+                  <th x-text="ui('dateLabel')"></th>
+                  <th x-text="ui('amountLabel')"></th>
+                  <th x-text="ui('sourceLabel')"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <template x-for="d in recentDonations" :key="`${d.date}-${d.amount}-${d.source}`">
+                  <tr>
+                    <td x-text="d.date"></td>
+                    <td class="amount-cell" x-text="formatNumber(d.amount)"></td>
+                    <td x-text="d.source"></td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+        <aside class="overview-side panel">
+          <div class="ring-wrap">
+            <div class="ring" :style="`--p:${progress}`">
+              <div class="ring-center">
+                <div class="ring-value"><span x-text="progress"></span>%</div>
+                <div class="ring-label" x-text="ui('progressLabel')"></div>
+              </div>
             </div>
           </div>
 
-          <div class="money-row">
+          <div class="stats-grid">
             <div>
-              <span>Зібрано</span>
-              <strong x-text="fmtCurrency(raised)">$0</strong>
+              <div class="stat-big" x-text="formatMoney(totalRaised)"></div>
+              <div class="stat-sub" x-text="ui('raisedLabel')"></div>
             </div>
             <div>
-              <span>Ціль</span>
-              <strong x-text="fmtCurrency(goal)">$0</strong>
+              <div class="stat-big goal-big" x-text="formatMoney(goal)"></div>
+              <div class="stat-sub stat-goal" x-text="ui('goalLabel')"></div>
             </div>
           </div>
 
-          <div class="barline" aria-hidden="true"><span :style="{ width: percent + '%' }"></span></div>
-          <div class="meta">
-            <span>Останнє оновлення: <b x-text="updated || '—'">—</b></span>
-            <span>Внесків у таблиці: <b x-text="supporters">0</b></span>
-            <span x-text="sheetStatus">Завантаження даних...</span>
-          </div>
-        </section>
+          <div class="side-divider"></div>
 
-        <section class="panel history-panel" id="history">
-          <h2>Історія донатів</h2>
-          <div class="history-empty" x-show="donations.length === 0" x-cloak>Донати ще не завантажені з таблиці.</div>
-          <div class="donation-list" x-show="donations.length > 0" x-cloak>
-            <template x-for="donation in visibleDonations" :key="donation.id">
-              <div class="donation-item">
-                <div class="donation-date" x-text="shortDate(donation.date)">—</div>
-                <div class="donation-dot"></div>
-                <div class="donation-amount" x-text="fmtDonationAmount(donation)">$0</div>
-                <div class="donation-info">
-                  <strong x-text="donation.country || 'Благодійник'">Благодійник</strong>
-                  <span x-text="donation.payment || '—'">—</span>
-                </div>
-              </div>
-            </template>
-          </div>
-        </section>
-
-        <section class="panel donate-panel" id="donate">
-          <h2>Реквізити</h2>
-          <div class="tabbar" role="tablist" aria-label="Способи підтримки">
-            <button class="tab" :class="{ active: activePayment === 'mono' }" type="button" role="tab" :aria-selected="activePayment === 'mono'" @click="activePayment = 'mono'">Банка Mono</button>
-            <button class="tab" :class="{ active: activePayment === 'paypal' }" type="button" role="tab" :aria-selected="activePayment === 'paypal'" @click="activePayment = 'paypal'">PayPal</button>
-            <button class="tab" :class="{ active: activePayment === 'sepa' }" type="button" role="tab" :aria-selected="activePayment === 'sepa'" @click="activePayment = 'sepa'">SEPA</button>
-            <button class="tab" :class="{ active: activePayment === 'swift' }" type="button" role="tab" :aria-selected="activePayment === 'swift'" @click="activePayment = 'swift'">SWIFT</button>
+          <div class="donor-block">
+            <div class="donor-big" x-text="donorCount"></div>
+            <div class="stat-sub" x-text="ui('donorsLabel')"></div>
           </div>
 
-          <div class="tabpanes">
-            <div class="pane" x-show="activePayment === 'mono'" x-transition.opacity.duration.150ms x-cloak>
-              <div class="requisites">
-                <div class="req"><div><span>Посилання на банку</span><strong>https://send.monobank.ua/jar/your-link</strong></div><button class="copy" type="button" @click="copy('https://send.monobank.ua/jar/your-link')">Копіювати</button></div>
-                <div class="req"><div><span>Номер картки</span><strong>0000 0000 0000 0000</strong></div><button class="copy" type="button" @click="copy('0000 0000 0000 0000')">Копіювати</button></div>
-                <div class="req"><div><span>Призначення</span><strong>На автомобіль для служіння</strong></div><button class="copy" type="button" @click="copy('На автомобіль для служіння')">Копіювати</button></div>
-              </div>
-            </div>
-
-            <div class="pane" x-show="activePayment === 'paypal'" x-transition.opacity.duration.150ms x-cloak>
-              <div class="requisites">
-                <div class="req"><div><span>PayPal</span><strong>your-paypal@example.com</strong></div><button class="copy" type="button" @click="copy('your-paypal@example.com')">Копіювати</button></div>
-                <div class="req"><div><span>Призначення</span><strong>Donation for ministry vehicle</strong></div><button class="copy" type="button" @click="copy('Donation for ministry vehicle')">Копіювати</button></div>
-              </div>
-            </div>
-
-            <div class="pane" x-show="activePayment === 'sepa'" x-transition.opacity.duration.150ms x-cloak>
-              <div class="requisites">
-                <div class="req"><div><span>IBAN</span><strong>UA00 0000 0000 0000 0000 0000 000</strong></div><button class="copy" type="button" @click="copy('UA00 0000 0000 0000 0000 0000 000')">Копіювати</button></div>
-                <div class="req"><div><span>Отримувач</span><strong>Pidhaine Ministry</strong></div><button class="copy" type="button" @click="copy('Pidhaine Ministry')">Копіювати</button></div>
-                <div class="req"><div><span>Призначення</span><strong>Support for vehicle ministry</strong></div><button class="copy" type="button" @click="copy('Support for vehicle ministry')">Копіювати</button></div>
-              </div>
-            </div>
-
-            <div class="pane" x-show="activePayment === 'swift'" x-transition.opacity.duration.150ms x-cloak>
-              <div class="requisites">
-                <div class="req"><div><span>IBAN</span><strong>UA00 0000 0000 0000 0000 0000 000</strong></div><button class="copy" type="button" @click="copy('UA00 0000 0000 0000 0000 0000 000')">Копіювати</button></div>
-                <div class="req"><div><span>SWIFT/BIC</span><strong>AAAAUAUXXXX</strong></div><button class="copy" type="button" @click="copy('AAAAUAUXXXX')">Копіювати</button></div>
-                <div class="req"><div><span>Банк / отримувач</span><strong>Bank Name · Pidhaine Ministry</strong></div><button class="copy" type="button" @click="copy('Bank Name · Pidhaine Ministry')">Копіювати</button></div>
-              </div>
-            </div>
+          <div class="btn-stack">
+            <a class="btn btn-primary" :href="text('donateLink','#donate')" x-text="ui('donateButton')"></a>
+            <button class="btn btn-outline" type="button" @click="sharePage()" x-text="ui('shareButton')"></button>
           </div>
-          <p class="hint">Перед публікацією замініть реквізити у вкладках на реальні.</p>
-        </section>
-      </aside>
-    </div>
-  </main>
+        </aside>
+      </section>
 
-  <footer>
-    <div class="layout footer-inner">
-      <span>Сторінка збору на автомобіль для служіння</span>
-      <span>Донати й тексти можуть підтягуватися з Google Таблиці</span>
-    </div>
-  </footer>
+      <section class="payment-options" id="donate">
+                  <div class="payment-head">
+                    <h2 x-text="ui('paymentTitle')"></h2>
+                    <p x-text="ui('paymentSubtitle')"></p>
+                  </div>
+      
+                  <div class="payment-grid">
+                    <article class="payment-card">
+                      <div class="payment-icon">●</div>
+                      <div>
+                        <h3 x-text="text('monotitle', ui('monoTitle'))"></h3>
+                        <p x-text="text('monodetails', ui('monoDetails'))"></p>
+                      </div>
+                    </article>
+      
+                    <article class="payment-card">
+                      <div class="payment-icon">P</div>
+                      <div>
+                        <h3 x-text="text('paypaltitle', ui('paypalTitle'))"></h3>
+                        <p x-text="text('paypaldetails', ui('paypalDetails'))"></p>
+                      </div>
+                    </article>
+      
+                    <article class="payment-card">
+                      <div class="payment-icon">€</div>
+                      <div>
+                        <h3 x-text="text('sepatitle', ui('sepaTitle'))"></h3>
+                        <p x-text="text('sepadetails', ui('sepaDetails'))"></p>
+                      </div>
+                    </article>
+      
+                    <article class="payment-card">
+                      <div class="payment-icon">$</div>
+                      <div>
+                        <h3 x-text="text('swifttitle', ui('swiftTitle'))"></h3>
+                        <p x-text="text('swiftdetails', ui('swiftDetails'))"></p>
+                      </div>
+                    </article>
+                  </div>
+                </section>
 
-  <div class="toast" :class="{ show: toastVisible }" x-text="toastMessage">Скопійовано</div>
+      <section class="old-minivan-gallery panel-full" x-init="setGalleryImages(['assets/old-minivan/old-minivan-01.jpg','assets/old-minivan/old-minivan-02.jpg','assets/old-minivan/old-minivan-03.jpg','assets/old-minivan/old-minivan-04.jpg','assets/old-minivan/old-minivan-05.jpg','assets/old-minivan/old-minivan-06.jpg','assets/old-minivan/old-minivan-07.jpg','assets/old-minivan/old-minivan-08.jpg','assets/old-minivan/old-minivan-09.jpg','assets/old-minivan/old-minivan-10.jpg','assets/old-minivan/old-minivan-11.jpg','assets/old-minivan/old-minivan-12.jpg','assets/old-minivan/old-minivan-13.jpg','assets/old-minivan/old-minivan-14.jpg','assets/old-minivan/old-minivan-15.jpg','assets/old-minivan/old-minivan-16.jpg','assets/old-minivan/old-minivan-17.jpg'])">
+        <div class="gallery-head">
+          <div>
+            <div class="kicker-dark" x-text="text('galleryKicker', ui('galleryKicker'))"></div>
+            <h2 x-text="text('galleryTitle', ui('galleryTitle'))"></h2>
+            <p class="section-desc" x-text="text('gallerySubtitle', ui('gallerySubtitle'))"></p>
+          </div>
+        </div>
 
-  <div class="image-modal" x-show="imageModalOpen" x-transition.opacity x-cloak @click.self="closeImage()" aria-modal="true" role="dialog" aria-label="Перегляд фото">
-    <div class="image-modal-card" x-transition.scale.origin.center>
-      <button class="image-modal-close" type="button" @click="closeImage()" aria-label="Закрити фото">×</button>
-      <img :src="activeImage.src" :alt="activeImage.caption || 'Фото автомобіля'" />
-      <div class="image-modal-caption" x-show="activeImage.caption" x-text="activeImage.caption"></div>
+        <div class="gallery-grid">
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-01.jpg')">
+              <img src="assets/old-minivan/old-minivan-01.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-02.jpg')">
+              <img src="assets/old-minivan/old-minivan-02.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-03.jpg')">
+              <img src="assets/old-minivan/old-minivan-03.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-04.jpg')">
+              <img src="assets/old-minivan/old-minivan-04.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-05.jpg')">
+              <img src="assets/old-minivan/old-minivan-05.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-06.jpg')">
+              <img src="assets/old-minivan/old-minivan-06.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-07.jpg')">
+              <img src="assets/old-minivan/old-minivan-07.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-08.jpg')">
+              <img src="assets/old-minivan/old-minivan-08.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-09.jpg')">
+              <img src="assets/old-minivan/old-minivan-09.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-10.jpg')">
+              <img src="assets/old-minivan/old-minivan-10.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-11.jpg')">
+              <img src="assets/old-minivan/old-minivan-11.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-12.jpg')">
+              <img src="assets/old-minivan/old-minivan-12.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-13.jpg')">
+              <img src="assets/old-minivan/old-minivan-13.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-14.jpg')">
+              <img src="assets/old-minivan/old-minivan-14.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-15.jpg')">
+              <img src="assets/old-minivan/old-minivan-15.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-16.jpg')">
+              <img src="assets/old-minivan/old-minivan-16.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+            <button class="gallery-item" type="button" @click="openGalleryImage('assets/old-minivan/old-minivan-17.jpg')">
+              <img src="assets/old-minivan/old-minivan-17.jpg" alt="Старий мінівен у служінні" loading="lazy" />
+            </button>
+        </div>
+      </section>
+      <div class="gallery-lightbox" x-show="galleryImage" x-cloak @click.self="closeGalleryImage()" @keydown.escape.window="closeGalleryImage()" @keydown.arrow-left.window="prevGalleryImage()" @keydown.arrow-right.window="nextGalleryImage()">
+        <button class="gallery-close" type="button" @click="closeGalleryImage()" :aria-label="ui('closeLabel')">×</button>
+
+        <button class="gallery-nav gallery-prev" type="button" @click.stop="prevGalleryImage()" :aria-label="ui('prevPhoto')">‹</button>
+
+        <img :src="galleryImage" alt="Фото старого мінівена" />
+
+        <button class="gallery-nav gallery-next" type="button" @click.stop="nextGalleryImage()" :aria-label="ui('nextPhoto')">›</button>
+
+        <div class="gallery-counter">
+          <span x-text="galleryIndex + 1"></span>/<span x-text="galleryImages.length"></span>
+        </div>
+      </div>
+      <section class="info-section panel panel-full">
+        <h2 x-text="content.need.title || text('needTitle','Для чого потрібен новий автомобіль?')"></h2>
+        <p class="section-desc" x-text="content.need.desc || text('needDesc','Надійний транспорт потрібен не для зручності, а для того, щоб служіння могло продовжуватися без зривів і ризику на дорозі.')"></p>
+        <ul class="bullets bullets-green" x-show="content.need.items.length" x-cloak>
+          <template x-for="item in content.need.items" :key="item">
+            <li x-text="item"></li>
+          </template>
+        </ul>
+      </section>
+
+      <section class="info-section panel panel-full">
+        <h2 x-text="content.risk.title || text('riskTitle','Чому старий вже небезпечний')"></h2>
+        <p class="section-desc" x-text="content.risk.desc || text('riskDesc','Стан авто вже не дозволяє покладатися на нього для регулярних поїздок.')"></p>
+        <ul class="bullets bullets-red" x-show="content.risk.items.length" x-cloak>
+          <template x-for="item in content.risk.items" :key="item">
+            <li x-text="item"></li>
+          </template>
+        </ul>
+      </section>
+
+      <section class="family-section panel panel-full">
+        <div class="family-photo-wrap">
+          <img class="family-photo" src="assets/family.jpg" alt="Наша сімʼя" />
+        </div>
+        <div class="family-content">
+          <div class="kicker-dark" x-text="text('familyKicker', ui('familyKicker'))"></div>
+          <h2 x-text="text('familyTitle', ui('familyTitle'))"></h2>
+          <p class="section-desc" x-text="text('family','Ми дякуємо за вашу підтримку, молитви та участь у цьому зборі. Для нас цей автомобіль — це можливість безпечніше служити людям і бути поруч там, де є потреба.')"></p>
+        </div>
+        <div class="thanks-block">
+          <span class="thanks-icon">♡</span>
+          <span x-text="text('thanks', ui('thanks'))"></span>
+        </div>
+      </section>
     </div>
   </div>
 
   <script src="js/main.js" defer></script>
-  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </body>
-
 </html>
