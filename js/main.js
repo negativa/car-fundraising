@@ -15,7 +15,7 @@ function fundraiserPage() {
       en: { need: { title: '', desc: '', items: [] }, risk: { title: '', desc: '', items: [] } }
     },
     donations: [],
-    goal: 35000,
+    goal: 20000,
 
     uiText: {
       ua: {
